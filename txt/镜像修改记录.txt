@@ -1,0 +1,91 @@
+修改记录
+master                                                                    #################
+开发环境
+E:\deployv2\Dockerfile
+registry.cn-hangzhou.aliyuncs.com/deployv2/lnmp:php-7.1
+harbor.oneitfarm.com/deployv2/lnmp:php-7.1
+
+E:\deployv2\docker-compose.yaml
+registry.cn-hangzhou.aliyuncs.com/deployv2/workspace:php-7.1
+harbor.oneitfarm.com/deployv2/workspace:php-7.1
+
+E:\deployv2\docker\lnmp\Dockerfile
+registry.cn-hangzhou.aliyuncs.com/deployv2/lnmp:php-7.1
+harbor.oneitfarm.com/deployv2/lnmp:php-7.1
+
+
+自动化部署
+E:\deployv2\K8S\mysql\statefulset.yaml
+registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0		x2
+
+
+工作环境
+E:\deployv2\charts\mysqlha\values.yaml
+registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0
+harbor.oneitfarm.com/google-samples/xtrabackup:1.0
+
+E:\deployv2\app\Jobs\DeployDatabaseJob.php
+registry.cn-hangzhou.aliyuncs.com/deployv2/database:mysql-8.0	x2
+	aliyun-registry-vpc		Always
+registry-vpc.cn-shanghai.aliyuncs.com/itfarm/database:mysql-8.0         ######################
+
+E:\deployv2\app\Jobs\DeployModelconfigJob.php
+registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:
+	aliyun-registry-vpc
+registry.cn-shanghai.aliyuncs.com/itfarm/modeconfig:p
+
+
+
+
+
+
+
+
+1.10
+
+开发环境
+
+E:\deployv2\Dockerfile
+FROM registry.cn-hangzhou.aliyuncs.com/deployv2/lnmp:php-7.1
+FROM harbor.oneitfarm.com/deployv2/lnmp:php-7.1
+
+E:\deployv2\docker\lnmp\Dockerfile
+FROM registry.cn-hangzhou.aliyuncs.com/deployv2/lnmp:k8s-v1.10.7
+FROM harbor.oneitfarm.com/deployv2/lnmp:k8s-v1.10.7
+
+E:\deployv2\docker\workspace\Dockerfile
+FROM registry.cn-hangzhou.aliyuncs.com/deployv2/workspace:k8s-v1.10.7
+FROM harbor.oneitfarm.com/deployv2/workspace:k8s-v1.10.7
+
+自动化部署环境
+E:\deployv2\K8S\mysql\statefulset.yaml
+registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0		x2
+harbor.oneitfarm.com/google-samples/xtrabackup:1.0
+
+
+
+工作环境
+E:\deployv2\app\Jobs\DeployDatabaseJob.php
+registry.cn-hangzhou.aliyuncs.com/deployv2/database:mysql-8.0		x2
+ccr.ccs.tencentyun.com/itfarm/database:mysql-8.0		#tencent-registry
+
+E:\deployv2\app\Jobs\DeployModelconfigJob.php
+registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:
+ccr.ccs.tencentyun.com/itfarm/modeconfig:
+
+E:\deployv2\charts\workspace\values.yaml
+registry.cn-shanghai.aliyuncs.com
+ccr.ccs.tencentyun.com
+
+E:\deployv2\app\Jobs\DeployDeploymentJob.php
+-	registry.cn-shanghai.aliyuncs.com/cidata/php-sdk-exporter:latest
+	ccr.ccs.tencentyun.com/itfarm/php-sdk-exporter:latest
+-	registry.cn-shanghai.aliyuncs.com/itfarm/lnmp:
+	ccr.ccs.tencentyun.com/itfarm/lnmp:
+-	registry.cn-shanghai.aliyuncs.com/itfarm/toolbox:
+	ccr.ccs.tencentyun.com/itfarm/toolbox:
+
+全局registry-secret替換tencent-registry
+
+
+

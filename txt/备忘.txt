@@ -1,0 +1,72 @@
+==========git
+git status
+git config --global core.autocrlf input		签出不转换
+git config --list	配置项
+git branch -a 查看分支
+git reset --hard	版本退回
+git checkout -b deployv2_k8s_1.10 origin/deployv2_k8s_1.10 切换分支
+git push origin -d xxx 删除远程分支
+git pull origin xxx	更新远程分支
+git commit -m ""
+git rm --cached xxx 删除已经add的文件
+
+========push code
+git checkout -b hotfix
+git branch --unset-upstream master
+git branch --set-upstream-to=hotfix
+git config --global user.email "xiongyungang@corp-ci.com"
+git config --global user.name "xiongyungang"
+git add xxx
+git commit -m ""
+git push [-f] origin hotfix
+
+git push --set-upstream origin hotfix	(2)
+
+==========push file or empty
+git init
+git add .
+[git rm --cached xxx]
+git commit -m ""
+git remote add origin xxx
+git push -u origin master
+ 
+export KUBECONFIG="/tmp/kubeconfig_workspace_1"
+
+winpty docker-compose exec workspace bash	进入工作目录
+php artisan migrate		数据库迁移
+php composer.phar install
+
+"php-amqplib/php-amqplib": "2.7.*"
+php composer.phar require php-amqplib/php-amqplib
+php composer.phar require itfarm/kubernetes-client
+
+apt-get install iputils-ping
+apt list --installed	查看已安装
+
+===========创建namespace
+INSERT INTO `deploy`.`namespaces` SET `name`='itfarm3',`appkey`='kxjz4mnkw7yacdnopzjprxi6mte8b1vf',`channel`=1,`uniqid`='1',`cluster_id`=1,`real_name`='itfarm',`resource_id`=1,`state`='Started',`desired_state`='Started',`attempt_times`=32,`message`='12',`callback_url`='123',`created_at`='2018-12-05',`updated_at`='2018-12-05';
+
+
+==========安装libevent
+wget http://monkey.org/~provos/libevent-1.4.13-stable.tar.gz
+ install gcc
+./configure -prefix=/usr
+make && make install
+ls -al /usr/lib | grep libevent
+==========安装re me
+wget http://downloads.sourceforge.net/repcached/memcached-1.2.8-repcached-2.2.tar.gz
+./configure --enable-replication --program-transform-name=S/memcached/repcached/
+make && make install
+
+==========宿主机xshell连接k8s部署的容器
+1.复制容器/.ssh/authorized_keys
+2.转换base64,存储到宿主机
+3.xshell新建连接，主机：部署svc.namespace
+4.用户身份验证，方法：public，用户密钥：选择保存在宿主机的authorized_keys文件
+5.新建代理，名称：任意	类型：http1.1	主机：abc.oneitfarm.com	端口：30080	其他空
+
+==========python连接sasl-memcache
+ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+ python3 get-pip.py
+pip install python-binary-memcached
+

@@ -1,0 +1,193 @@
+# 版本分支信息：
+```
+deployv2_k8s_1.08(master)：	阿里云
+deployv2_k8s_1.10：		腾讯云
+```
+
+# deployv2_k8s_1.08
+## 开发环境
+```
+mysql:
+    image:  mysql:5.7.22
+deployment:
+	image:  registry.cn-hangzhou.aliyuncs.com/deployv2/lnmp:php-7.1
+workspace:
+    image:  registry.cn-hangzhou.aliyuncs.com/deployv2/workspace:php-7.1
+redis:
+    image:  redis:4.0.10-alpine
+
+
+```		
+
+## 自动化部署环境
+```	
+deployment:
+	deployv2：
+		image:  registry-vpc.cn-shanghai.aliyuncs.com/idg/deployv2
+mysql:
+	initContainers:
+		clone-mysql:
+			image:  registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0	有重复
+		init-mysql:
+			image:  mysql:5.7.22	有重复
+	containers:
+		mysql:
+			image:  mysql:5.7.22
+		xtrabackup:
+			image:  registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0
+redis:
+	deployv2-redis:
+		image:  redis:4.0.10-alpine
+
+
+```	
+
+## 工作环境
+```	
+mysql:
+    initContainers：
+        clone-mysql：
+        	image:  registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0		有重复
+        init-mysql:
+        	image:  mysql:5.7.22
+    containers:
+        mysql:
+        	image:  mysql:5.7.22
+        xtrabackup:
+        	image:  registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0
+database: 
+	job:
+		containers:
+			image:  registry.cn-hangzhou.aliyuncs.com/deployv2/database:mysql-8.0	有重复
+modeconfig: 
+	job:
+		containers:
+			job:
+				image: 
+	   				registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:php-5.6
+	   				registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:php-7.0
+	   				registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:php-7.1
+	   				registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:php-7.2
+deployment:
+ 	containers:
+ 		deployment:
+ 			image：
+	   			registry-vpc.cn-shanghai.aliyuncs.com/itfarm/lnmp:php-5.6
+	   			registry-vpc.cn-shanghai.aliyuncs.com/itfarm/lnmp:php-7.0
+	   			registry-vpc.cn-shanghai.aliyuncs.com/itfarm/lnmp:php-7.1
+	   			registry-vpc.cn-shanghai.aliyuncs.com/itfarm/lnmp:php-7.2	
+ 		cidata-reporter：
+			image:  registry-vpc.cn-shanghai.aliyuncs.com/cidata/php-sdk-exporter:latest
+		job:
+			image:
+	 			registry-vpc.cn-shanghai.aliyuncs.com/itfarm/toolbox:php-5.6
+	 			registry-vpc.cn-shanghai.aliyuncs.com/itfarm/toolbox:php-7.0
+	 			registry-vpc.cn-shanghai.aliyuncs.com/itfarm/toolbox:php-7.1
+	 			registry-vpc.cn-shanghai.aliyuncs.com/itfarm/toolbox:php-7.2
+workspace:
+    containers:
+    	image:  registry-vpc.cn-shanghai.aliyuncs.com/itfarm/workspace:php-7.1
+
+```	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# deployv2_k8s_1.10
+## 开发环境
+```
+mysql:
+    image:  mysql:5.7.22
+deployment:
+    image:  registry.cn-hangzhou.aliyuncs.com/deployv2/lnmp:k8s-v1.10.7
+workspace:
+    image:  registry.cn-hangzhou.aliyuncs.com/deployv2/workspace:k8s-v1.10.7
+redis:
+    image: redis:4.0.10-alpine
+
+```	
+
+## 自动化部署环境
+```	
+deployment:
+	deployv2：
+		image:  registry.cn-shanghai.aliyuncs.com/idg/deployv2
+mysql:
+	initContainers:
+		clone-mysql:
+			image:  registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0	有重复
+		init-mysql:
+			image:  mysql:5.7.22		有重复
+	containers:
+		mysql:
+			image:  mysql:5.7.22
+		xtrabackup:
+			image:  registry-gcr-io.oneitfarm.com/google-samples/xtrabackup:1.0
+redis:
+	deployv2-redis:
+		image:  redis:4.0.10-alpine
+
+
+```	
+
+
+## 工作环境
+```	
+mysql:
+    initContainers：
+        clone-mysql：
+        	image:  harbor.oneitfarm.com/google-samples/xtrabackup:1.0		有重复
+        init-mysql:
+        	image:  mysql:5.7.22
+    containers:
+        mysql:
+        	image:  mysql:5.7.22
+        xtrabackup:
+        	image:  harbor.oneitfarm.com/google-samples/xtrabackup:1.0
+database: 
+	job:
+		containers:
+			image:  registry.cn-hangzhou.aliyuncs.com/deployv2/database:mysql-8.0	有重复
+modeconfig:
+	job:
+		containers:
+			job:
+				image:
+	   				registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:php-5.6
+	  				registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:php-7.0
+	   				registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:php-7.1
+	   				registry.cn-hangzhou.aliyuncs.com/deployv2/toolbox:php-7.2
+deployment:
+ 	containers:
+ 		deployment:
+ 			image：
+	   			registry.cn-shanghai.aliyuncs.com/itfarm/lnmp:php-5.6
+	   			registry.cn-shanghai.aliyuncs.com/itfarm/lnmp:php-7.0
+	   			registry.cn-shanghai.aliyuncs.com/itfarm/lnmp:php-7.1
+	   			registry.cn-shanghai.aliyuncs.com/itfarm/lnmp:php-7.2
+ 		cidata-reporter：
+			image:  registry.cn-shanghai.aliyuncs.com/cidata/php-sdk-exporter:latest
+ 		job:
+ 			image:
+				registry.cn-shanghai.aliyuncs.com/itfarm/toolbox:php-5.6
+				registry.cn-shanghai.aliyuncs.com/itfarm/toolbox:php-7.0
+				registry.cn-shanghai.aliyuncs.com/itfarm/toolbox:php-7.1
+				registry.cn-shanghai.aliyuncs.com/itfarm/toolbox:php-7.2
+workspace:
+    containers:
+    	image:  registry.cn-hangzhou.aliyuncs.com/deployv2/workspace:k8s-v1.10.7
+
+
+```	

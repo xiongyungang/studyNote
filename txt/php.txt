@@ -1,0 +1,62 @@
+push  php代码，容器脚本
+java语法框架复习、设计模式、算法、面试题
+java项目(ssm,boot,ssh)
+四级英语
+
+【构造函数】
+function __construct()
+【析构函数】
+当某个对象的所有引用被删除，或者对象被显式的销毁时会执行析构函数
+function  __destruct()
+【静态方法】
+public static function method()
+类名::方法名
+可以使用self，parent在内部调用静态方法与属性
+【访问控制】
+私有：构造方法可以为私有
+公有：函数默认公有，属性必须定义访问控制
+受保护： protected，可以被其自身以及其子类和父类访问
+【php中的重载】
+PHP中的重载指的是动态的创建属性与方法
+属性重载：赋值（_set），读取（__get），判断属性是否设置（__isset），销毁属性（__unset）
+方法重载：__call($name,$args)，当调用不存在的方法的时候，将会转为参数调用__call方法，属性name为方法名，args为传递的参数数组
+【正则表达式】
+正则匹配模式：/search/ 、#word#、^忽略大小写^i
+\w匹配字母或数字或下划线
+\d匹配数字
+\s匹配任意的空白符，包括空格、制表符、换行符
+\i忽略大小写
+
+【mysql】
+连接：mysql_connect('127.0.0.1', 'code1', '');
+选择数据库：mysql_select_db('code1');
+查询：mysql_query("select * from user");
+【安装php环境】
+https://www.cnblogs.com/ampl/p/9881660.html
+【nginx配置php】
+    server {
+        listen       80 default_server;
+        listen       [::]:80 default_server;
+        server_name  _;
+        index  index.php index.html;
+        root         /usr/share/nginx/html;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        location ~ \.php$ {
+        root           /usr/share/nginx/html;
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+        }
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+    }
