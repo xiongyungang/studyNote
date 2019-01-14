@@ -1,0 +1,75 @@
+关闭防火墙
+
+【关闭swap】
+执行swapoff -a可临时关闭，但系统重启后恢复
+编辑/etc/fstab，注释掉包含swap的那一行即可永久关闭
+
+【关闭SeLinux】
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+setenforce 0
+
+【接受所有ip的数据包转发】
+$ vi /lib/systemd/system/docker.service
+#找到ExecStart=xxx，在这行上面加入一行，内容如下：(k8s的网络需要)
+ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
+
+【允许路由转发，不对bridge的数据进行处理】
+cat <<EOF > /etc/sysctl.conf
+net.ipv4.ip_forward=1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sysctl -p
+
+【kubectl】
+kubectl get componentstatuses	检查各个组件状态
+kubectl run kubernetes-bootcamp --image=jocatalin/kubernetes-bootcamp:v1 --port=8080	镜像启动
+kubectl exec -ti <your-pod-name>  [-n <your-namespace>]  -- /bin/sh 	进入pod
+kubectl scale deploy NAME --replicas=NUM	扩容
+kubectl get pods[ -o wide]
+kubectl get deploy [-o wide]
+kubectl get svc [-o wide]
+kubectl describe service NAME
+kubectl describe deploy NAME	单个deploy详细
+kubectl describe pods NAME	单个pod详细
+kubectl get cs
+kubectl get rs
+kubectl proxy 开启一个用于测试的8001端口
+curl http://127.0.0.1:8001/api/v1/proxy/namespaces/default/pods/nginx/	访问
+kubectl set image deploy kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2	更新镜像
+kubectl create -f nginx-deployment.yaml	根据yaml文件创建
+kubectl apply -f nginx-deployment.yaml 
+kubectl expose deploy kubernetes-bootcamp --type="NodePort" --target-port=8080 --port=80
+
+【docker】
+centos install:
+yum install -y yum-utils   device-mapper-persistent-data   lvm2
+yum-config-manager     --add-repo     https://download.docker.com/linux/centos/docker-ce.repo 
+yum-config-manager --enable docker-ce-edge
+yum-config-manager --enable docker-ce-test
+yum-config-manager --disable docker-ce-edge
+yum list docker-ce --showduplicates | sort -r 
+yum install docker-ce-18.06.0.ce-3.el7
+
+exec -it ID bash
+cp 主机和容器文件复制
+commit	改动为新Image
+stop ID			停止一个镜像
+run -p 8080:80 -d daocloud.io/nginx 	运行容器，80端口映射到宿主机8080端口
+ps -a	可查看已停止的容器
+rmi IMAGE_ID	删除image
+rm 删除已停止的容器
+docker rm $(docker ps -a -q)	删除所有已经停止的容器
+pull	获取image
+build [-t <TAG>]	Dockerfile创建image -t设置标签
+
+【Dockerfile】
+FROM	基础镜像名
+RUN	执行命令
+ADD	添加文件
+COPY	拷贝文件
+CMD	执行命令
+EXPOSE	暴露端口
+
+
+

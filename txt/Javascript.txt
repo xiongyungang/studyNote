@@ -1,0 +1,284 @@
+19:13 2018/7/16
+**********语法注意******
+【引入】<script src="路径" type="text/javascript"></script>
+
+【多个scrcpt块中的内容可以相互访问】
+
+【操作符注意】
+1)字符串和数字比较，会将字符串转换为数字再进行比较
+2)两个整数相除结果不为整是，不会取整，还是小数
+
+【判断条件的自动类型转换】
+1)number:非0为true,值0为false
+2)string:非null或非空为true,否则为false
+3)undefined:false
+4)NaN:false
+5)对象类型：非null为true,否则为false
+
+【数据类型】
+String 字符串
+Number 数字
+boolean 布尔(true是1，false是0)
+Array 数组
+Object 对象
+Null 空类型
+Undefined 未定义
+
+【对象】
+1)内置对象：Data,Math,Array,String
+2)自定义对象
+3)浏览器对象：window,document,location
+4)ActiveX对象
+
+**********String************
+
+String.charAt(1)	返回索引值对应字符
+String.charCodeAt(1)	返回索引对应字符Unicode
+String.fontColor("red") 给字符串添加font标签，并设置color的属性
+String.link(url);	给文本添加链接
+String.replace(s1,s2)	将s1替换为s2
+
+************Date************
+
+var date = new Date();	//获取当前系统时间
+
+//把当前系统时间拼装成我指定的格式。
+var timeInfo =  date.getFullYear()+"年"+(date.getMonth()+1)+"月"+date.getDate()+"日 "+
+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+
+************Number**********
+
+toString()	数字转字符串
+toString(2)	数字转字符串指定进制
+toFixed(1)	保留小数位数，四舍五入
+
+**********Math对象**********
+
+1)Math.ceil() 向上取整
+Math.ceil(3.13)=4
+Math.ceil(-3.14)=3
+2)Math.floor()	向下取整
+3)Math.random()	随机数
+4)Math.round(3.14)四舍五入
+
+***********数组*************
+
+【创建】
+1)var arr = new Array();
+2)var arr = ["",""...];
+【方法】
+1)arr1.concat(arr2)	连接数组
+2)arr.join(",")	将数组用指定分隔符成字符串
+3)arr.pop()	删除数组最后一个元素并返回该元素
+4)arr.push(33)	将一个元素追加到数组，并返回该数组长度
+5)arr.reverse()	反转数组元素位置
+6)arr.shift()	删除数组第一个元素并返回该元素
+7)arr.slice(start,[end])  截取数组，包头不包尾
+8)arr.sort(比较器函数)	数组排序
+【for in】
+for(var num in Array){
+}
+遍历数组num为下表
+遍历对象num为属性
+
+************函数************
+
+【函数定义方式】
+1)function hello(){}
+2)var fun1 = funcion(){}
+3)var fun2 = new Function("参数","参数","函数体");
+【函数注意】
+1)函数定义时形参不可以指定类型
+2)函数无重载，后定义覆盖前定义的函数
+3)任何函数形参会先传递给内部隐式维护的arguments数组，再由arguments数组分配给形参
+4)函数无返回值类型，可直接return
+
+【内置函数】
+1)typeof num 数据类型
+2)parseInt(str) 字符串转数字
+3)parseFloat(str) 字符串转浮点
+4)isNaN(str) str是数字返回false
+
+**************prototype原型*****
+1.prototype是函数(function)(只要是function,就一定有一个prototype属性)
+2.prototype的值是一个对象
+3.可以任意修改函数的prototype属性的值。
+4一个对象会自动拥有prototype的所有成员属性和方法。
+每个函数内置prototype属性，它是一个Object对象
+
+【为内置对象添加方法】
+Array.prototype.printf = function(){
+	alert("hello");
+}
+
+*******自定义对象**********
+所有对象继承Object类
+1)内置的Object函数
+var person = new Object();
+  person.name = "xyg";
+  person.age = 32;
+
+2)字面量方
+var person = {
+	name : "xyg",
+	age  : 32,
+	say  : function(){
+		alert(this.name);
+	}
+};
+3)无参函数
+function Person(){}
+var p = new Person();
+p.age=1;
+p.name="";
+4)有参函数
+function Person(id,name){
+  this.id =id;
+  this.name = name;
+  this.say = function(){
+	alert("");
+  }
+}
+var p = new Person(3,"sf");
+
+【取json对象值】
+1）json.XXX
+2）json["XXX"]
+
+
+***********BOM**************
+
+【window】代表浏览器打开的一个窗口
+window.open(url)	新窗口打开
+window.resizeTo(30,20)	改变当前窗口大小
+window.setInterval()	每经过指定毫秒执行
+window.setTimeout()	经过指定毫秒执行一次
+
+【window事件】
+onclick		单击
+onmousemove	鼠标经过
+onmouseout	鼠标移出
+onfocus		获得焦点
+onblur		失去焦点
+onochange	下拉框内容改变
+onsubmit	表单提交
+onload		页面加载完成
+
+【location】地址栏对象
+location.reload()	刷新页面
+location.href		设置和获取url
+
+location.reload();刷新页面(服务器重新获取页面)
+location.href="/url"; 当前页面打开URL页面；
+
+【screen】屏幕对象
+screen.availHeight	获取垂直分辨率（不包括windows任务栏）
+screen.availWidth	获取水平分辨率（不包括windous任务栏）
+screen.height		屏幕垂直分辨率（包括window任务栏）
+screen.width		屏幕水平分辨率（包括window任务栏）
+
+
+************DOM*************
+
+【Document】	文档树对象
+【Node】	document的每一个标签对象
+
+document.all	获取所有标签节点
+document.links	获取文档中含有href属性的标签节点
+
+【通过属性找节点】
+document.getElementById(html元素的id)	
+document.getElementByName(html元素的name属性)
+document.getElementByTagName(标签名)
+【通过关系找节点】
+childNodes	获取当前元素的所有子节点(注意文本节点)
+parentNode	父节点
+nextSibling	下一个节点
+previousSibling	上
+【创建插入节点】
+var ele = document.createElement("标签名")
+Node.appendChild(ele);		
+Node.insertBefore(new,old);
+Nodel.removeChild(child)	删除子节点
+
+【创建节点属性】
+ele.setAttribute("属性名","属性值")
+
+【修改节点属性】
+innerHtml	设置标签体内容,div,span...
+value		设置value值，input
+style		修改css样式，如color,fontsize
+
+*************正则表达式*****
+【创建】
+1)/正则表达式/模式
+2)new RegExp("正则表达式",模式);
+
+【使用】
+正则对象.test(Str)	使用正则对象去匹配字符串,匹配返回ture
+正则对象.exec(Str)	根据正则表达式查找字符串符合规则的内容
+
+【模式】
+1)g	全文模式
+2)i	忽略大小写
+
+
+【边界匹配器】
+^开始
+$结束
+\b单词边界匹配器
+
+【范围匹配】
+[0-9]	数字
+[a-Z]	字母
+
+**************Ajax**********
+AJAX是一个【局部刷新】的【异步】通讯技术
+
+【XMLHttpRequest】
+可扩展超文本传输请求，可实列化一个ajax对象
+
+【创建】
+function createAJAX(){
+	var ajax = null;
+	try{
+		ajax = new ActiveXObject("microsoft.xmlhttp");//检测 window.ActiveXObject 
+	}catch(e1){
+		ajax = new XMLHttpRequest();//测试 window.XMLHttpRequest 对象是否可用
+	}
+	return ajax;
+}
+
+【属性】
+ajax.readyState==0：表示AJAX异步对象已创建好，但还没有调用open()方法
+ajax.readyState==1：表示AJAX异步对象已调用open()方法，但还没有调用send()方法
+ajax.readyState==2：表示AJAX异步对象已调用send()方法，但请求还没有到达服务器端
+ajax.readyState==3：表示服务端已接收到AJAX异步对象的请求，正在处理响应中。。。
+ajax.readyState==【4】：表示AJAX异步对象已经完完全全接收到了服务器的响应信息，但接收到的数据不一定都正确
+上述5种状态不是所有浏览器都相同，但状态4每种浏览器都相同
+ajax.status==200：表示AJAX异步对象接收到响应码，如果是200的话，表示一切正常
+ajax.responseText：表示从AJAX异步对象中获取HTML载体中的数据
+ajax.responseXML：表示从AJAX异步对象中获取XML载体中
+
+【数据载体】
+1）HTML
+2）XML
+3）JSON
+
+步一：创建AJAX异步对象，例如：createAJAX()
+步二：准备发送异步请求，例如：ajax.open(method,url)
+步三：如果是POST请求的话，一定要设置AJAX请求头，例如：ajax.setRequestHeader()
+	如果是GET请求的话，无需设置设置AJAX请求头
+步四：真正发送请求体中的数据到服务器，例如：ajax.send()
+步五：AJAX不断的监听服务端响应的状态变化，例如：ajax.onreadystatechange，后面写一个无名处理函数	步六：在无名处理函数中，获取AJAX的数据后，按照DOM规则，用JS语言来操作Web页面
+
+
+
+
+
+
+
+
+
+
+

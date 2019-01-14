@@ -1,0 +1,226 @@
+/********2018/5/17**********
+net start mysql 打开MySQL服务器
+net stop mysql 停止服务器
+【设置密码】mysqladmin -u root password admin
+
+【连接Linux下mysqlServer】
+将权限授予其他电脑
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '自己密码' WITH GRANT OPTION;
+mysql> FLUSH PRIVILEGES;
+【windows开启关闭mysql】net stop/start mysql
+
+ERROR 1217 (23000): Cannot delete or update a parent row: a foreign key constrain fails。
+
+可能是MySQL在InnoDB中设置了foreign key关联，造成无法更新或删除数据。可以通过设置FOREIGN_KEY_CHECKS变量来避免这种情况。
+
+1、set foreign_key_checks=0;
+
+2、删除要删除的表;
+
+3、set foreign_key_checks=1;
+
+/**********database**********
+
+DROP DATABASE <dbName> 删除数据库
+ALTER DATABASE <dbName> default character set <utf8/gbk> 修改数据库默认字符集
+SHOW DATABASES; 查看所有数据库
+SHOW CREATE DATABASE <dbName> 查看数据库默认字符集
+CREATE DATABASE <dbName> [default character set <utf8/gbk>]; 创建数据库，指定字符集
+USE <datebasename>打开数据库
+
+/**********table***********
+
+CREATE TABLE  <tableName> (  <字段名> <类型>[(长度),]...)  创建表
+DESC <tbName> 查看表结构
+SHOW TABLES 查看所有表
+DROP TABLE <tbName> 删除表
+ALTER TABLE <tbName> RENAME <新表名> 修改表名
+ALTER TABLE <tbName> ADD <字段名> <类型>[(长度)] [,ADD <字段名> <类型>] 增加表字段
+ALTER TABLE <tbName> DROP <字段名>    删除表字段
+ALTER TABLE <tbName> MODIFY <字段名> <类型>[(长度)] 修改表字段类型
+ALTER TABLE <tbName> CHANGE <原字段名> <新字段名> <类型>[(长度)] 修改表字段名
+
+/************record********
+
+DELETE FROM <TN> [<WHERE>...]删除记录
+TRUNCATE TABLE <tbName> 删除全部记录，和delete区别在于：不可带条件，不可回滚，可以重置自增长
+INSERT INTO <tableName> VALUES() 插入记录，全部字段
+INSERT INTO <tbName>(字段列表) VALUES(字段列表值) 指定字段插入记录
+UPDATE <tbName> SET <字段名=值> [,<字段名=值>...] [WHERE] 修改记录
+
+SELECT * FROM <tbName>查询所有列
+SELECT DISTINCT * FROM <tbName> 去重复记录
+SELECT <字段名> [,<字段名>...] FROM <tbName> 查询指定字段
+SELECT <字段名> [as <别名>] FROM <tbName> 查询指定字段，指定字段别名
+SELECT <字段名> 'JAVA就业班' as '班级' FROM <tbName> 查询时添加常量列
+SELECT <(数值字段1+数值字段2)> as '成绩' FROM <tbName> 查询时累计数值列
+SELECT * FROM <tbName> WHERE BETWEEN <字段>  0 AND 10 包前包后条件查询，该字段>=0 and <=10
+SELECT * FROM <TN> WHERE <字符类型字段> LIKE CONCAT('%',string,'%') 模糊查询
+【模糊查询通配符】%任意多个字符/ _任意单个字符   like '李%'：姓李，like '李_'：姓李2个字
+SELECT * FROM <TN> [ORDER BY]  [DESC]查找加排序
+【条件查询】
+1逻辑条件：and or
+2比较条件：> < >= <= <>(不等) =    between and()
+3判空条件：
+1)null值：is null/is not null
+2)空字符串：='' / <>''
+4模糊条件：like
+【聚合查询】使用聚合函数的查询
+1.sum():求和
+SELECT SUM(<字段>) FROM <tbName>
+2.avg():平均值
+SELECT SUM(<字段>) FROM <tbName>
+3.max()/min():最值
+4.count():统计记录数
+注意：count()会省略null值的字段
+SELECT COUNT(*) FROM <tbName>
+【分页查询】
+limit 起始行 查询几行
+SELECT * FROM <tbName> [LIMIT 0, n]
+【排序查询】
+顺序：ASC 
+逆序：DESC
+SELECT * FROM <tbName> ORDER BY <字段> DESC/ASC
+多个排序排序条件，前一个条件相同结果再按后一个条件排序
+SELECT * FROM <tbName> ORDER BY <字段> [,<字段>]
+【分组查询】字段值相同为一组
+注意：分组之后加条件用HAVING
+SELECT <分组字段> FROM <tbName> GROUP BY <分组字段> [HAVING 条件]
+
+*************数据约束**********
+
+【默认值】
+create table student(
+       id int,
+       address varchar(40) default '中国大陆'
+)
+【非空】必须赋值，不能赋值null
+create table student(
+       id int,
+       gender varchar(2) not null
+)
+【唯一】对null值不起作用
+create table student(
+       id int unique
+)
+【主键】(非空+唯一)，标记记录的唯一性
+create table student(
+       id int PRIMARY KEY,
+       gender varchar(2) not null
+)
+【自增长】
+AUTO_INCREMENT
+ZEROFILL 零填充
+【外键约束】
+CONSTRAINT 外键名称 FOREIGN KEY(外键) REFERENCES 参考表(参考字段)
+--部门表（主表）
+create table dept(
+id int primary key,
+deptName varchar(20)
+)
+--员工表（副表/从表）
+create table employee(
+id int ,
+deptId int,
+constraint bydept foreign key(deptId) references dept(id)
+)
+注意：被约束的表为副表，约束别人的表为主表，外键设置在副表上
+主表的参考字段通常为主键
+【级联】级联在外键约束的基础上，通过修改主表影响副表
+级联修改：外键约束+ON UPDATE CASCADE
+级联删除：外键约束+ON DELETE CASCADE
+/**************数据库设计*********
+
+【三大范式】
+1.每个字段独立
+2.与主键有依赖关系
+3.只能和主键有直接绝定依赖关系
+
+/*************连接*********
+【连接条件数量】表数量-1
+【交叉连接查询】不加条件查询
+【内连接查询】满足条件才会显示
+INNER JOIN <tbName> ON <连接条件>
+select employee.empName,dept.deptName
+from employee inner join dept on employee.deptId=dept.id
+【左[外]连接查询】左表数据完全显示，不满足显示null
+LEFT [OUTER] JOIN <tbName> ON <连接条件>
+select d.id '部门编号',d.deptName '部门名称',e.empName '员工姓名'
+from dept d left join employee e on d.id=e.deptId
+【右[外]连接查询】右表数据完全显示，不满足显示null
+RIGHT [OUTER] JOIN <tbName> ON <连接条件>
+select d.id,d.deptName,e.empName 
+from employee e right join dept d on  d.id=e.deptId
+【自连接查询】用别名虚拟出一张表，同表进行连接查询
+select e2.empName,e.empName 'boss'
+from employee e2 left join employee e on e.id=e2.bossId
+【多表连接语法】
+select p.pname,c.name,b.brand_name from product_ p 
+inner join category_ c on p.cate_id =c.id
+inner join brands b on p.brand_id = b.brand_id
+
+/****************子查询*******
+【比较运算符引发的子查询】
+查询产品表中价格大于价格平均值的记录
+select * from product_ where price > (
+select avg(price) p_avg from product_)
+
+	ANY	SOME	ALL
+>/>=	最小值	最小值	最大值
+</<=	最大值	最大值	最小值
+=	任意	任意	/
+<>/!=	/	/	任意
+
+【由[NOT]IN 引发子查询】
+1）=ANY运算符与IN等效
+2）!=ALL或<>ALL与NOT IN等效
+【insert...select】insert into <tb>(<字段>) [select...]
+将产品表分类名称字段分组，插入到分类表中
+insert into category_(name) select cate from product_ group by cate;
+【多表更新】update <tb> <连接类型 on 连接条件> set <更新内容>
+将产品表的分类名称替换为分类表的id
+update product_ p inner join category_ c on p.cate = c.name set p.cate = c.id
+【create...select】通过查询结果创建表
+将产品表的品牌字段分组创建品牌表
+create table brands (
+brand_id smallint unsigned primary key auto_increment,
+brand_name varchar(20)
+)
+select brand_name from product_ group by brand_name;
+【子查询实现去除产品名相同记录】
+delete t1 from product_ t1			//使用自连接方式
+left join (select p.id,p.name from product_ p 	//左外连接
+group by p.name having count(p.name)>1)) as t2 	//子查询：查询产品表并按产品名分组，数量>1的记录
+on t1.name=t2.name where t1.id>t2.id		//连接条件：和子查询的p.name相同，并且过滤第一条记录
+
+/*************存储过程******
+【创建】
+delimiter $--设置结束标识（front内置了标识为;）
+CREATE PROCEDURE pro_test()  --存储过程名称(参数列表)
+BEGIN
+     select * from employee;
+END $
+【调用】CALL pro_test(参数);
+【删除】DROP PROCEDURE pro_test;
+【参数】
+1.INT:输入参数
+2.OUT：输出参数
+3.INOUT：输入输出参数
+
+
+/***********mysql变量*******
+1.全局变量：mysql内置的变量
+2.会话变量：作用域在客户端和服务器一次连接中生效
+3.局部变量：在存储过程中使用的变量
+
+
+/************触发器***********
+【插入员工表向日志表添加一条记录】
+create trigger tri_empAdd after insert on employee for each row
+insert into test_log(content) values('员工表插入了一条数据');
+【更新员工表向日志表添加一条记录】
+create trigger tri_empUpdate after update on employee for each row
+insert into test_log(content) values('员工表修改了一条数据');
+【删除员工表向日志表添加一条记录】
+create trigger tri_empDel after delete on employee for each row
+insert into test_log(content) values('员工表删除了一条数据');

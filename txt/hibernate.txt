@@ -1,0 +1,159 @@
+【Hibernate.cfg.xml】
+主配置文件：数据库连接信息、其他参数、映射信息！
+1）自动建表
+#hibernate.hbm2ddl.auto create   每次都重新建表； 如果表已经存在就先删除再创建
+#hibernate.hbm2ddl.auto update  如果表不存在就创建； 表存在就不创建；
+#hibernate.hbm2ddl.auto validate  映射文件的内容与数据库表结构不一样的时候就报错！
+2）映射
+<mapping resource="com/pojo/Student.hbm.xml" />
+#映射文件需要和类同名
+#不能同时映射两个同名xml文件，不同包名也不行
+3）显示于格式化
+<property name="show_sql">true</property>
+<property name="hibernate.format_sql">true</property>
+
+【映射配置】
+映射一个实体类对象；  描述一个对象最终实现可以直接保存对象数据到数据库中
+1）hibernate-mapping 根节点
+	package属性: 要映射的对象所在的包(可选,如果不指定,此文件所有的类都要指定全路径)
+	auto-import属性： 默认为true， 在写hql的时候自动导入包名
+				如果指定为false, 再写hql的时候必须要写上类的全名；
+2）class节点
+映射某一个对象对应数据表
+	name属性： 指定要映射的对象的类型
+	table属性： 指定对象对应的表
+3）普通字段映射 property
+name  指定对象的属性名称
+column 指定对象属性对应的表的字段名称
+length 指定字符的长度, 默认为255
+type   指定映射表的字段的类型，如果不指定会匹配属性的类型
+java类型：     必须写全名
+hibernate类型：  直接写类型，都是小写
+3）主键字段映射
+#自增长
+#复合主键
+如果找不到合适的列作为主键，出来用id列以外，我们一般用联合主键，即多列的值作为一个主键，从而确保记录的唯一性。
+【复合主键配置】
+复合主键类，必须实现序列化接口
+<composite-id name="复合对象">
+
+【开发步骤】
+1）引入hibernate核心包
+2）对象及对象的映射
+	Employee.java
+	Employee.hbm.xml
+3)src/hibernate.cfg.xml主配置文件
+	数据库连接配置
+	加载所用的映射(hbm.xml)
+4)测试
+
+【Configuration】加载主配置文件
+配置管理类对象
+config.configure();    加载主配置文件的方法(hibernate.cfg.xml)
+		默认加载src/hibernate.cfg.xml
+config.configure(“cn/config/hibernate.cfg.xml”);   加载指定路径下指定名称的主配置文
+config.buildSessionFactory();   创建session的工厂对象
+
+【Session】
+session对象维护了一个连接(Connection), 代表了与数据库连接的会话
+	session.save(obj);   保存一个对象
+	session.update(emp);  更新一个对象
+	session.saveOrUpdate(emp); 	 保存或者更新的方法：
+					没有设置主键，执行保存；
+					有设置主键，执行更新操作; 
+	session.beginTransaction(); 开启一个事务； hibernate要求所有的与数据库的操作必须有事务的环境，否则报错！
+	
+
+【查询】
+1）get()/load()主键查询
+	Session.get(Employee.class)//主键查找
+	Session.load(Employee.class)//主键查找
+2)对象导航查询
+	s = (Student)session.get(Student.class, 1);
+	System.out.println(s.getGender());
+	System.out.println(s.getName());
+3)HQL查询
+	查询对象及对象的属性
+	from 对象 where 对象属性
+4)Criteria，完全面向对象查询
+	Criteria criteria = Session.createCriteria(Employee.class);
+	criteria.add(Restrictions.eq(对象属性,属性值);
+4)原生SQL
+	session.createSQLQuery(sql);//返回对象数组,添加到集合
+	session.createSQLQuery(sql).addEntity(Employee.class);//返回Employee，添加到集合
+
+【关联映射】
+#将一个对象映射为外键字段(将员工对象的部门属性，映射为外键字段)：使用many-to-one映射
+1）一对多映射
+       	 <set name="外键属性" table="外键属性对应的表">
+       	 	<key column="外键字段名"></key>
+       	 	<one-to-many class="关联对象"></one-to-many>
+       	 </set>
+2）多对一映射
+ 	 <!-- column要和部门表外键同名 -->
+         <many-to-one name="关联属性" column="关联表的外键字段" class="关联对象"></many-to-one>
+#一对多/多对一用多的一方维护一的一方，可提高hibernate的效率(减少update)
+？两个都存在关系映射的对象，使用hibernate获取且toString()会造成无限递归
+3）多对多映射
+只能通过一方保存另一方
+保存项目也需要保存员工（或设置级联保存）
+4）一对一映射
+#基于外键（唯一）映射
+#基于主键（主键又是外键）映射
+
+【inverse属性】表示控制权是否反转，默认false不反转
+1)一对多设置反转只在一的一方有效，获取无影响，保存(外键字段null)、移除关系：清空集合(不能解除关联关系)、删除数据(报错)
+2）多对多设置反转获取无影响，保存(不保存中间表)，移除关系（不删除中间表数据），删除(报错)
+
+【cascade属性】级联，可设置在一的一方和多的一方
+none(默认，不级联）
+save-update(级联保存，更新）
+save-update,delete
+delete(级联删除）
+all(所有）
+
+【懒加载】
+目的：提高程序执行效率 
+属性：默认lazy="ture"开启懒加载
+用到映射关系数据的时候，再进行查询
+#LazyInitializationException懒加载异常
+#get及时加载/load懒加载
+
+【对象状态】瞬时状态、持久化状态、游离状态
+1）临时状态
+直接new出来的对象;  
+不处于session的管理;
+数据库中没有对象的记录;
+2）持久化状态
+当调用session的save/saveOrUpdate/get/load/list等方法的时候，对象就是持久化状态。
+处于持久化状态的对象，当对对象属性进行更改的时候，会反映到数据库中!
+特点：
+处于session的管理;
+数据库中有对应的记录;
+3）游离状态
+不处于session的管理；
+数据库中有对应的记录
+Session关闭后，对象的状态；
+
+【一级缓存】减少对数据库的访问次数！从而提升hibernate的执行效率
+1）一级缓存也叫做session的缓存，只在session范围有效！ 
+2）当调用session的save/saveOrUpdate/get/load/list/iterator方法的时候，都会把对象放入session的缓存中。 
+3）Session的缓存由hibernate维护， 用户不能操作缓存内容； 如果想操作缓存内容，必须通过hibernate提供的evit/clear方法操作。
+【二级缓存】(sessionFactory级别)可以跨多个session
+缓存策略：：read-only、nonstrict-read-write、read-write、transactional
+【list与iterator区别】
+1）list() 
+一次把所有的记录都查询出来，
+#会放入缓存，但不会从缓存中获取数据
+2）Iterator
+N+1查询； N表示所有的记录总数
+即会先发送一条语句查询所有记录的主键（1），
+再根据每一个主键再去数据库查询（N）！
+通过iterator()方法来获得我们对象的时候，hibernate首先会发出1条sql去查询出所有对象的 id 值，当我们如果需要查询到某个对象的具体信息的时候，hibernate此时会根据查询出来的 id 值再发sql语句去从数据库中查询对象的信息
+#会放入缓存，也会从缓存中取数据！
+
+【分页】
+        Criteria c= s.createCriteria(Product.class);
+        c.add(Restrictions.like("name", "%"+name+"%"));
+        c.setFirstResult(2);
+        c.setMaxResults(5);

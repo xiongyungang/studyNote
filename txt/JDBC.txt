@@ -1,0 +1,138 @@
+13:55 2018/7/22
+用于执行SQL语句的Java API，可以为多种关系数据库提供统一访问
+
+---------常用API---------
+|- Driver接口： 表示java驱动程序接口。所有的具体的数据库厂商要来实现此接口。
+  |- connect(url, properties):  连接数据库的方法。
+|- DriverManager类： 驱动管理器类，用于管理所有注册的驱动程序
+  |-registerDriver(driver)  : 注册驱动类对象
+  |-Connection getConnection(url,user,password);  获取连接对象
+|- Connection接口： 表示java程序和数据库的连接对象。
+  |- Statement createStatement() ： 创建Statement对象
+  |- PreparedStatement prepareStatement(String sql)  创建PreparedStatement对象
+  |- CallableStatement prepareCall(String sql) 创建CallableStatement对象
+|- Statement接口： 用于执行静态的sql语句
+        |- int executeUpdate(String sql)  ： 执行静态的更新sql语句（DDL，DML）
+        |- ResultSet executeQuery(String sql)  ：执行的静态的查询sql语句（DQL）
+   |-PreparedStatement接口：用于执行预编译sql语句
+        |- int executeUpdate() ： 执行预编译的更新sql语句（DDL，DML）
+        |- ResultSet executeQuery()  ： 执行预编译的查询sql语句（DQL）
+      |- CallableStatement接口：用于执行存储过程的sql语句（call xxx）
+        |- ResultSet executeQuery()  ： 调用存储过程的方法
+|- ResultSet接口：用于封装查询出来的数据
+   |- boolean next() ： 将光标移动到下一行
+   |- getXX() : 获取列的值
+
+
+
+
+-----------连接---------------
+【注册驱动】
+Class.forName("com.mysql.jdbc.Driver");
+
+【通过DriverManager获取连接对象】
+DriverManager.getConnection(url,user,password);
+JDBC的URL＝协议名＋子协议名＋数据源名
+//	jdbc:mysql://localhost:3306/database
+//	jdbc:mysql:///database	同上简写
+
+
+
+-----------执行DDL/DML------------
+1)获取连接对象
+2)获取statement对象
+statement = connection.createStatement();
+3)执行
+   statement.executeUpdate(sql);	//增删改
+
+
+
+-----------执行DQL------------
+1)获取连接对象
+2)获取statement对象
+3)获取结果集
+   ResultSet result = statement.executeQuery(sql);
+
+
+-----------ResultSet------------
+数据结果集对象
+   boolean next()	默认表头，次行无数据返回false
+【getXXX()】
+   result.getInt(1);	//通过索引(从1开始)
+   result.getInt("id");	//通过字段名
+
+
+-----------Statement------------
+用于执行静态的sql语句
+int executeUpdate(String sql)  执行静态的更新sql语句（DDL，DML）
+ResultSet executeQuery(String sql)  执行的静态的查询sql语句（DQL）
+
+
+---------PreparedStatement----------
+继承Statement，执行预编译sql
+【不同于Statement】
+1）预编译sql语句，防止sql注入
+2）可以使用sql数据库缓存区，效率高
+connection.prepareStatement("insert into student_(name,gender) values(?,?)")
+//设置占位符，索引从1开始
+prepareStatement.setString(1, "xyg");
+prepareStatement.setString(2, "h5");
+
+
+
+------------CallableStatement--------
+继承PreparedStatement，执行存储过程
+CallableStatement callableStatement = connection.prepareCall(sql);
+// 获取结果对象
+ResultSet resultSet = callableStatement.executeQuery();
+
+【带有返回值的存储过程】
+String sql = "call getEmployById2(?,?)";
+CallableStatement callableStatement = connection.prepareCall(sql);
+// 设置输入参数
+callableStatement.setInt(1, 2);
+//设置输出参数
+callableStatement.registerOutParameter(2, java.sql.Types.VARCHAR);
+//执行
+callableStatement.executeQuery();
+//获取输出参数
+//索引值与设置输出参数的位置一样
+String name = callableStatement.getString(2);//getXXX专门用于获取输出参数的方法
+
+
+
+----------获取自增长值集合--------
+//1.创建satement并在参数中返回自增长列
+createStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+//执行
+//2.获取自增长列集(可能多个)，返回ResultSet对象
+Statement.getGeneratedKeys();
+
+
+
+
+-------------事务回滚------------
+【手动提交】
+// 一.手动提交事务，默认自动
+connection.setAutoCommit(false);
+【异常回滚】
+connection.rollback();
+【提交事务】
+connection.commit();
+【回滚到指定代码】
+1）执行语句中设置point
+savepoint = connection.setSavepoint();
+2）回滚方法参数
+connection.rollback(savepoint);
+
+
+-----------连接池----------
+【接口】连接池技术要实现的接口
+javax.sql.DataSource
+【实现】
+1）DBCP
+　　DBCP是一个依赖Jakarta commons-pool对象池机制的数据库连接池.Tomcat的数据源使用的就是DBCP。
+2）c3p0
+　　c3p0是一个开放源代码的JDBC连接池，
+3)Druid
+

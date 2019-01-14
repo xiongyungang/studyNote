@@ -1,0 +1,171 @@
+【Servlet】java语言编写动态资源的开发技术，普通的java类
+
+【转发与重定向的区别】
+转发在服务器端完成的；重定向是在客户端完成的 
+转发的速度快；重定向速度慢 
+转发的是同一次请求；重定向是两次不同请求 
+重定向不能保存数据在request域中，转发可以
+转发不会执行转发后的代码；重定向会执行重定向之后的代码 
+转发地址栏没有变化；重定向地址栏有变化 
+转发必须是在同一台服务器下完成；重定向可以在不同的服务器下完成
+
+【加载资源文件路径】
+"."代表tomcat/bin目录，不能再web项目中使用
+
+【Servlet线程】
+1）单例多线程：tomcat实例化一个servlet类，为每个用户开启一个线程处理请求
+2）线程安全问题：
+多个用户访问Servlet的共享数据(成员变量),可能会产生线程安全问题
+	解决：使用共享数据时加锁
+3）实现单线程模式
+<%@ page isThreadSafe=”false”%> 	默认值为true 
+https://blog.csdn.net/john2522/article/details/7467983
+ 
+【Servlet开发步骤】
+1）编写Servlet类
+继承HttpServlet类,重写doGet(),doPost()方法
+2）编译servlet字节码
+存放在tomcat的一个web应用中的WEB-INF/classes目录下
+3）配置一个servlet web.xml中
+	<servlet>
+		<!-- servlet的内部名称 ，可以自定义-->
+		<servlet-name>HelloServlet</servlet-name>
+		<!-- servlet类名： 包名+简单类名-->
+		<servlet-class>gz.itcast.d_servlet.HelloServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<!-- servlet的内部名称，和上面的名称保持一致！！！-->
+		<servlet-name>HelloServlet</servlet-name>
+		<!-- servlet的访问名称： /名称 -->
+		<url-pattern>/hello</url-pattern>
+	</servlet-mapping>
+4）访问：启动tomcat，访问http://localhost:8080/myweb/hello
+
+
+
+【servlet生命周期】
+1）加载Servlet：当Tomcat第一次访问Servlet的时候，Tomcat会负责创建Servlet的实例【构造器】
+2)初始化:当Servlet被实例化后，Tomcat会调用【init()】方法初始化这个对象
+3)处理服务:当浏览器访问Servlet的时候，Servlet 会调用【service()】方法处理请求
+4)销毁:当Tomcat关闭时或者检测到Servlet要从Tomcat删除的时候会自动调用【destroy()】方法，让该实例释放掉所占的资源。一个Servlet如果长时间不被使用的话，也会被Tomcat自动销毁
+
+简单总结：只要访问Servlet，service()就会被调用。init()只有第一次访问Servlet的时候才会被调用。
+destroy()只有在Tomcat关闭的时候才会被调用。
+
+【servlet的自动加载】默认是第一次访问时加载，改变servlet的加载时机可以提前到加载web应用时创建
+配置servlet时添加<load-on-startup>1</load-on-startup>,tomcat启动时会加载此类，越小优先级越高
+
+
+------------------HttpServletRequest----------------
+【请求行】 
+request.getMethod();   请求方式
+request.getRequetURI()   / request.getRequetURL()   请求资源
+request.getProtocol()   请求http协议版本
+【请求头】
+request.getHeader("名称")  	根据请求头获取请求值
+request.getHeaderNames()    	获取所有的请求头名称
+【实体内容】
+request.getInputStream()   	获取实体内容数据
+【获取请求参数】
+request.getParamerter(参数名)：	获取一个值的参数
+request.getParamerterValue(参数名)：获取多个值的同名参数，如select元素值
+
+request.getParamerterNames():	获取所有参数名称列表
+ 
+【设置请求参数的编码格式】
+request.setCharacterEncoding("utf-8");	//只对POST方式提交的数据有效
+
+
+
+
+------------------HttpServletResponse----------------
+响应行： 
+response.setStatus(404)  设置状态码
+响应头： 
+response.setHeader("name","value")  设置响应头
+实体内容：
+response.getWriter().writer();   响应二进制数据
+response.getOutputStream().writer()  响应字符数据
+
+【设置响应类型和内容编码】如果未指定字符集，则将使用ISO-8859-1
+response.setContentType("text/html;charset=UTF-8")
+【以流的方式响应】
+response.setContentType("text/html; charset=UTF-8");
+PrintWriter pw = response.getWriter();
+pw.close();
+【重定向】
+response.sendRedirect("www.baidu.com");
+
+-------------ServletConfig对象--------
+【初始化参数配置】
+<servlet>
+<servlet-name/><servlet-class/>
+<init-param>
+	<param-name>name</param-name>
+	<param-value>xyg</param-value>
+</init-param>
+</servlet>
+【创建】
+tomcat启动web应用封装这些配置信息到servletconfig对象中，调用init()时传入servletconfig对象
+【获取】
+this.getServletConfig().getInitParameter("name");//获取配置信息
+
+
+-----------ServletContext对象--------
+servlet的上下文对象，表示当前web应用环境，一个web应用中只有一个servletContext对象
+【获取】
+this.getServletConfig().getServletContext();//通过配置对象获取上下文对象
+【方法】
+servletContext.getContextPath();	//获取部署的项目名
+servletContext.getInitParameter("name");	//获取web应用初始化参数（全局）
+servletContext.getRequestDispatcher("/get").forward(request,response);	//转发
+
+----------------域对象------------
+用于在不同动态资源直接共享数据
+【分类】
+HttpServletRequest	一次请求
+ServletContext		全局
+HttpSession		一次会话
+PageContext		当前页面
+
+
+
+-------------JSP------------------
+【执行过程】
+1.浏览器访问jsp页面，tomcat将jsp翻译成java源文件（hello_jsp.java）
+2.tomcat将字节码翻译成class字节码文件（hello_jsp.class）
+3.tomcat构造生成的类对象(hello_jsp对象)
+4.调用类对象中方法
+再次访问就直接调用方法，无需构造类对象
+
+【work目录】存放jsp运行时的临时文件
+-------------jsp语法----------------
+【指令】<%@include%>,<%@page%>
+【表达式】向浏览器输出变量的值或表达式计算的结果
+<%=%> 	//out.print(“变量” );
+【脚本】 执行java代码	
+<%%>
+【声明】 声明jsp的变量或方法
+<%!%>
+动作	<jsp:include page="Filename" >
+【注释】	<%-- -- %>
+
+<jsp:forward page="path"/>	//服务端跳转
+<%response.sendRedirect("path");%>	//客户端跳转
+
+
+---------------JSTL------------------
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+取值 ${}
+设值<c:set var="" value="" scope="作用域"/>
+输出<c:out value=""/>
+删除<c:remove var="" scope="作用域">
+判断<c:if test="逻辑表达式">	</c:if>
+
+循环：<c:forEach items="es" var="e" varStatus="status">	</c:forEach>
+status.index行数0开始
+status.count行数1开始
+
+格式化日期<fmt:formatDate value="日期类型" pattern="yyyy:mm:dd"/>
+处理字符串：${fn:length()}
+	${fn:join()}

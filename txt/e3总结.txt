@@ -1,0 +1,193 @@
+/***********18:36 2018/6/1**************
+
+pom：聚合工程（包含其他工程）
+netstat   -ano|findstr  8080
+taskkill  /pid  6856  /f
+svn：xyg xyg
+vm端口444
+【启动redis】/usr/local/redis/bin/redis-server /usr/local/redis/bin/redis.conf
+【启动activemq 192.168.25.128:8161】apache-activemq-5.12.0/bin/activemq start/status/stop 
+【solr单机】/usr/local/solr/tomcat/bin/startup.sh
+
+/*******************SE******************
+
+System.in.read();//等待键盘输入，回车结束
+mysql：bigint对应java的long
+【全世界唯一字符串】UUID.randomUUID().toString()
+/***************Mybatis*****************
+
+获取自增长id：mapper.xml中增加select last_insert_id()
+查询大文本字段：查询非主键用selectByExample包含大文本用selectByExampleWithBLOBs
+
+/*****************spring/MVC**********
+
+【@responseBody】直接使用response来对浏览器写结果，并不跳转逻辑视图，返回值为对象会转为json对象再响应
+【Ajax请求返回406错误】缺少jaskson包或者拦截后缀为*.html(mvc无法接收以*html为后缀的json数据)
+【@Value】@Value("${var}")
+【@Resource】默认根据配置信息中对应id进行注入
+【<load-on-startup>1</load-on-startup>】启动tomcat时初始化此servlet
+【从spring容器中获取bean】根据xml初始化application（ClassPathXmlApplicationContext）,使用application.getBean获取对象。
+【java源代码中使用spring读取配置文件】xml加载配置文件，使用@Value获取配置文件信息
+【spring或springMVC读取配置文件注意】只能配置一个context:property-placeholder(加载配置文件)节点，或在一个节点中配置多个文件(部署linux)
+【上传图片】mvc配置文件上传解析
+伪静态化：mvc拦截.html后缀
+【解决get请求传递的中文乱码】将传递过来的中文字符串进行转码，keyword = new String(keyword.getBytes("iso-8859-1"), "utf-8");
+【全局异常处理】springMVC接收到异常会寻找异常处理器(实现HandlerExceptionResolver接口的类)来处理
+此异常，mvc.xml定义异常处理类的位置(bean class="") 
+【异常处理类】0定义org.slf4j.Logger 1配置log4j(输出级别debug.info.error)，2输出控制台，3转发到页面
+【配置拦截器】mvc.xml配置拦截器类位置和拦截范围，拦截器类实现 HandlerInterceptor接口
+【md5加密】DigestUtils.md5DigestAsHex(byte[]);
+
+/*************dubbo/zookeeper**********
+
+spring负责发布服务，与tomcat无关
+dubbo的注册中心ip在dubbo.properties下设置
+【配置注册中心】在zookeeper目录创建data目录存放zookerper数据文件,配置conf目录下zoo.cfg(复制zoo_sample.cfg),修改zoo.cfg的dataDir的目录位置为data的绝对路径
+【搭建zookeeper集群】为每个zookerper的data目录下新建myid文件(配置当前节点id，内容为1.2.3...)，配置zoo.cfg的dataDir和serverId(节点列表ip，通讯端口投举端口)
+
+/***************NGINX********************
+【环境】
+1.gcc 环境
+   yum install gcc-c++
+2.PCRE  正则表达式库
+   yum install -y pcre pcre-devel
+3.zlib  提供压缩形式库
+   yum install -y zlib zlib-devel
+4.Openssl	安全密码库
+   yum install -y openssl openssl-devel
+【编译安装】
+1.解压nginx安装包，并进入
+2.编译
+./configure \
+--prefix=/usr/local/nginx \			/*安装到哪个目录*/
+--pid-path=/var/run/nginx/nginx.pid \		/*pid文件保存目录*/
+--lock-path=/var/lock/nginx.lock \		/*lock文件保存目录*/
+--error-log-path=/var/log/nginx/error.log \	/*错误日志保存目录*/
+--http-log-path=/var/log/nginx/access.log \	/*http日志保存目录*/
+--with-http_gzip_static_module \		/*添加gzip文件模块*/
+--http-client-body-temp-path=/var/temp/nginx/client \
+--http-proxy-temp-path=/var/temp/nginx/proxy \
+--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \
+--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \
+--http-scgi-temp-path=/var/temp/nginx/scgi
+3.编译
+make
+4.安装
+make install (已经指定makefiles)
+5.启动前创建目录
+创建编译时http-client-body-temp-path指定的目录
+mkdir /var/temp/nginx -p
+
+【启动】sbin/nginx  nginx默认端口80
+关闭nginx服务器：sbin/nginx -s stop/quit
+开启nginx服务器：sbin/nginx
+不关机更新nginx配置文件：sbin/nginx -s reload
+配置虚拟主机：local/nginx/conf/nginx.conf(http代码块下可以配置多个server)
+
+【反向代理】
+这里原理就是，不同域名访问不同端口，根据server_name区分域名
+请求的转发，修改nginx.conf下server节点下location 将root改为proxy_pass代理到指定ip
+(加http://)
+server前加upstream块，相当于域名对应的ip地址
+    upstream tomcat1{
+	server 101.200.35.199:8080;
+    }
+    server {
+        listen       80;
+        server_name  localhost;      /*这里你可以指定其他域名*/
+
+        location / {
+            proxy_pass   http://tomcat1;
+            index  index.html index.htm;
+        }
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }  
+    }
+
+【负载均衡】将反向代理到的服务器设置为多个(默认权重1，可指定weight提高)
+
+/****************图片服务器**************
+
+用户名密码：root/itcast
+上传图片：需要fastdfs客户端，创建配置文件（图片服务器地址）并加载，通过StorageClient对象上传
+下载图片：浏览器直接访问图片地址（图片服务器+文件组名）
+
+/***************Redis********************
+
+前端启动：运行redisServer,占用命令行
+后端启动：配置redis.conf文件,启动时附加该配置文件
+关闭服务：kill或者./redis-cli shutdown
+客户端连接本地服务：./redis-cli
+客户端连接远程服务：./redis-cli -h 192.163.1.1 -p 6379
+所有数据以字符串形式保存
+ping 服务端响应pong
+set str1 abc 存键
+get str1 取键值
+del str1 删除键
+keys * 查询当前redis所有的key
+incr 自增长
+decr 自减
+hset xyg age 23存储hash类型
+hget xyg age 取hash类型
+hkeys xyg 查看hash Key
+hvals xyg 查看hash值
+hdel xyg age 删除hash Key
+hgetall xyg 查看hash键值对
+expire xyg 100 设置有效时间
+persist 持久化数据
+redis持久化方案：1.rdb定期保存内存 2aof保存数据库操作，恢复时重新执行
+redis集群:至少3个节点每个节点准备一台备份机 修改每个节点redis.conf为cluster-enabled yes及端口  使用ruby脚本运行redis-trib.rb(连接节点和分配槽)
+
+/******************solr*******************
+
+【环境安装】：1.将solr.war在tomcat下解压，2.添加solr需要的日志jar包添加到solr工程目录(WEB-INF/lib)，3.添加solrhome(复制solr到usr/local/solr下),4.将solrhome添加到solr工程(修改solr工程下web.xml下solrhome的路径)
+【solr集群】准备多个不同tomcat并分配不同端口，为每个tomcat指定一个solrhome，修改每个solrhome目录下solr.xml的solrcloud为当前tomcat的ip和端口号，修改tomcat/bin目录下的catalina.sh文件使其关联到zookeeper注册中心。让zookeeper统一管理配置文件。需要把solrhome/collection1/conf目录上传到zookeeper(使用zookeeper客户端)
+【配置中文分析器(IK)】：1.将分析器jar复制到工程，2复制扩展词典和配置文件
+【配置业务域(设置字段)】1.添加分析器：修改Solr的schema.xml文件，添加FieldType  2.自定义的FieldType(每个业务域都有id无需定义)
+【java客户端solrJ】1.创建SolrServer对象，2.创建SolrInputDocument文档对象，3.向文档添加域(必须添加id域，所有的域的名称必须在scheme.xml中定义),更新就是重复添加，删除有对应方法3.添加操作要把文档写入索引，4.提交 
+
+/**************ActiveMQ消息队列***************
+
+【密码】admin admin
+【安装】解压启动
+【解决405问题】配置hosts文件，配置机器名和127.0.0.1的映射关系，机器名在/ect/sysconfig/network文件中定义
+【通讯方式】queue/topic 点到点/广播
+【queue点到点通讯】一个消息生产者只能有一个消息消费者，没有消费者接收就一直存在，有消费者接受就删除此消息
+【topic广播通讯】一个消息生产者可以有多个消息消费者，消息发送后没有消费者就会丢失消息，topic也可以配置持久化（消息没接收依然存在） 
+【整合spring】配置连接对象ActiveMQConnectionFactory，ConnectionFactory，配置消息生产者JmsTemplate，配置消息消费者(定义监听器类实现MessageListener接口)，配置监听容器，使用JmsTemplate获取Destination
+
+/*****************Freemarker**************
+取属性值：${}
+遍历：<#list items as item></#list> 
+判断：<#if><#else></#if>
+日期：${date?date/time/datetime/string("yyyy/MM/dd")}
+null处理：!加默认值，判断是否为空<#if var??>
+引入：<#include "文件名">
+【整合springmvc】bean配置为FreeMarkerConfigurer，需要2个属性：模板位置和编码格式
+
+/****************Mysql/Mycat**************
+
+【mycat】提供高可用性数据分片集群。
+【启动mysql】mysql -uroot -padmin        |      service mysqld start/stop
+【启动mycat】安装目录 ./bin/mycat console/start/status/stop
+【mycat默认端口】8066
+【mysql默认端口】3066
+【配置节点关系】conf/schema.xml
+【规则定义】rule.xml 根据id值：每个节点id值上限五百万
+【mycat日志】logs/mycat.log
+
+/***************常犯错误******************
+1.dubbo没有启动
+2.服务发布错误
+3.@Service注解没写
+4.ServiceImpl放错位置
+5.发布服务ref没写成serviceImpl
+6.junit运行方法为private所有方法都运行失败
+7.request.getRequestURL()/request.getRequestURI() 写错，前者取全路径，后者去除工程名路径
+************23:37 2018/6/17***************
+
+
+
+

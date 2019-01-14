@@ -1,0 +1,145 @@
+----------------级联样式表----------------
+14:49 2018/4/22 星期日
+【引入外部文件】
+<link href="css文件地址" rel="stylesheet">
+【选择器】
+1)标签选择器：指定标签名进行样式化
+a{color:red;}
+2)类选择器：不能数字开头 优先于标签选择器
+.one{color:red;}
+3)id选择器：不能数字开头 保证唯一 优先于类和标签选择器
+#two{color:red;}
+4)交集选择器：选择器1 选择器2 样式化1中的2
+5)并集选择器：选择器1，选择器2  统一样式化1，2
+6)通用选择器：*{}
+*{
+background-color:#ccc;//页面背景
+}
+7)伪类选择器：元素处于某种状态下进行样式
+a:link{color:red;}/*未访问链接*/
+a:visited{color:red;}/*已访问连接*/
+a:hover{color:red;}/*鼠标经过 必须置于a:link和a:visited后才有效*/
+a:active{color:red;}/*选中连接，必须置于a:lover后才有效*/
+【常用属性】
+/*背景*/
+background-image:url(2.jpg);设置背景图片
+background-repeat:no-repeat;背景图片重复
+background-position:0px 0px;背景图片位置
+/*文字*/
+color:文字颜色
+font-size:23px;文字大小
+line-height:40px;行号
+/*边框*/
+顺序：上右下左
+border-style:solid;边框线形
+border-color:red green blue pink;边框颜色
+border-width:1px;边框宽度
+border:1px dotted LightSkyBlue;一起写
+/*边距*/
+内边距：数据到边框的距离
+外边距：边框到父元素距离
+margin-botton:30px;外边距
+padding-top:10px;内边距
+【定位】
+position:relative;相对定位，“相对于”元素在文档中的初始位置
+position:absolute;绝对定位，“相对于”最近的已定位祖先元素
+#box{
+  position:absolute;
+  top:200px;
+}
+
+【img大小】设置div中的img大小，要先设置div的大小再设置img的大小
+
+17:09 2018/7/15
+【div固定高度+自适应更多高度】
+<div style="
+min-height: 300px; /*只有ie6以上及其他浏览器认识，为的是定义最小高度*/
+height:auto !important;/*ie6及其他浏览器认识，为的是忽略下面的height：300px*/
+height:300px;/*只给ie6用，ie6本身就会超出高度自己适应*/
+">
+
+
+
+
+
+----------------JQuery----------------
+
+11:41 2018/5/25 星期五
+选择<a href="" class=""></a>直接选择class就可以
+input 获取属性值：val(); 修改属性值：val(Param);
+span  获取属性值：text(); 修改属性值：html(Param);
+$(this).attr() 获取当前对象的自定义属性值
+【和js方法的对比】
+JavaScript	Jquery
+innerHTML	html()
+value		val()
+removeChild	remove()
+appendChild	append()
+
+【jquery和js对象转换】
+1)js对象转换jq对象
+var $ele = $(js对象)
+2)jq对象转换js对象
+var ele = $("#id")[0] 	//jq对象=数组
+
+【个数】
+size()		jquery对象数组个数
+length
+
+【选择器】
+根据id选择
+ #id
+根据class选择
+ .class
+根据标签名选择	
+div
+全选	*
+直接父子关系
+div>p	div下的一个p元素
+子孙关系
+div div	div下的多级div元素（包含直接父子）
+相邻兄弟关系
+div+span	div后的span
+一般兄弟关系
+div~span	div的所有兄弟并排除span
+【筛选器】
+首尾	:first	:last
+奇偶	:odd	:even	下标0开始
+选择单个	:eq(index)
+大于小于index的所有元素		:gt(index)	:lt(index)
+去除不匹配	:not(select)	input:not(:checked)//筛选所有input没有checked的
+包含内容	:contains(text)	包含text的元素或子元素	
+包含元素	:has(selector)	包含“指定元素”的元素
+有子元素的元素	:parent		含文本	<a>   </a>
+无子元素的元素	:empty		含文本  <a></a>
+可见隐藏	:visible	:hidden
+
+
+【筛选】
+
+----------------AJAX-JS----------------
+【load】
+$().load(url[,data])	获取服务端文本保存到jQuery对象，无参数get，有参post
+【get】
+$.get(url [,data] [function(data){}])  以get方式发送请求
+【$.post()】
+$.post(url [,data] [function(data){}]) 以post方式发送请求
+【$.ajax()】
+$.ajax({
+  url:"",
+  type:"",
+  data:{},
+  success:,
+  error:,
+})
+【回调函数】
+function(backData,textStatus,xmlHttpRequest){}
+//参数1：backData表示返回的数据
+//参数2：textStatus表示返回状态的文本描述，如success，error
+//参数3：xmlHttpRequest表示ajax中核心对象
+【backData格式】
+服务器返回html，backData就是String
+服务器返回json, backData就是Object
+【表单序列化】
+表单元素.serialize()
+

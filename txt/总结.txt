@@ -1,0 +1,51 @@
+【基0基1】
+PreparedStatement	占位符基1
+HQL的Query语句		占位符基0
+ResultSet的getter	索引基1
+
+【"."目录】
+代表java运行目录，在哪运行的java文件“。”就在哪
+tomcat容器中，"."代表tomcat/bin目录
+
+/******************springboot*******************
+
+
+【打包】mvn -Dmaven.test.skip -U clean package
+【运行jar/war】java -jar web-0.0.1-SNAPSHOT.war
+
+
+/****************tomcat************************
+
+【运行过程】1.查找JAVA_HOME，2查找CATALINA_HOME(环境变量中配置，配置tomcat运行目录，没有则查找启动tomcat的目录)
+【webapps目录】tomcat共享目录
+【work目录】存放jsp运行时的临时文件
+【url】统一资源定位符
+
+
+
+
+
+
+
+/****************junit************************
+【断言】
+1)Assert.assertSame(expected,actual);		//expected==actual，底层使用==
+    Assert.assertSame(new String("abc"),"abc");	//false
+2)Assert.assertEquals()				//底层Equals
+3)Assert.assertNull()				//应是null值
+4)Assert.assertTrue()				//参数的值应是true
+5)assertFalse()					//参数的值应是false  
+【注解】
+@Test	表示单元测试方法。
+@Before 
+	所修饰的方法应是非static的（且没有参数，返回值为void）。
+	表示这个方法会在本类中的每个单元测试方法之前都执行一次。
+@After 
+	所修饰的方法应是非static的（且没有参数，返回值为void）。
+	表示这个方法会在本类中的每个单元测试方法之后都执行一次。
+@BeforeClass 
+	所修饰的方法应是static的（且没有参数，返回值为void）。
+	表示这个方法会在本类中的所有单元测试方法之前执行，只执行一次。
+@AfterClass 
+	所修饰的方法应是static的（且没有参数，返回值为void）。
+	表示这个方法会在本类中的所有单元测试方法之后执行，只执行一次。
