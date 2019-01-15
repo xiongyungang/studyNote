@@ -1,6 +1,7 @@
 ==========git
 git status
 git config --global core.autocrlf input		签出不转换
+git config --global core.quotepath false		中文文件名乱码
 git config --list	配置项
 git branch -a 查看分支
 git reset --hard	版本退回
