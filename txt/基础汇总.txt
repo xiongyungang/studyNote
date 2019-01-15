@@ -1,6 +1,21 @@
+************字符串************
+【String、StringBuffer、StringBuilder】
+1.String内容不可变，StringBuffer、StringBuilder内容可变
+2.StringBuffer同步线程安全效率低，StringBuilder不同步数据线程不安全效率高
+3.String1+String2 存在于不同的两个地址内存 
+Stringbuffer1.append(Stringbuffer2) 内存中是一个地址
+
+【用法】
+String：适用于少量的字符串操作的情况
+StringBuilder：适用于单线程下在字符缓冲区进行大量操作的情况
+StringBuffer：适用多线程下在字符缓冲区进行大量操作的情况
+
+
+
+
+
+
 ************集合**************
-
-
 Collection  单例集合根接口
 -----|List  有序，可重复。
 -------|ArrayList 底层是使用了Object数组实现 查询速度快，增删慢 线程不安全
@@ -27,8 +42,6 @@ iterator()返回迭代器对象
 add(T)	//追加
 add(index,T)	//插入，index相同往前插入
 set(index,T)	//修改
-
-
 
 
 
