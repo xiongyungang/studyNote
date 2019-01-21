@@ -1,5 +1,5 @@
 ************字符串************
-【String、StringBuffer、StringBuilder】
+【String、StringBuffer、StringBuilder区别】
 1.String内容不可变，StringBuffer、StringBuilder内容可变
 2.StringBuffer同步线程安全效率低，StringBuilder不同步数据线程不安全效率高
 3.String1+String2 存在于不同的两个地址内存 
@@ -10,7 +10,16 @@ String：适用于少量的字符串操作的情况
 StringBuilder：适用于单线程下在字符缓冲区进行大量操作的情况
 StringBuffer：适用多线程下在字符缓冲区进行大量操作的情况
 
+【String与StringBuffer/StringBuilder转换】
+		//1.String的构造方法
+		String str = new String(sbf);
+		//2.toString方法
+		sbf.toString();
 
+		//1.构造器
+		StringBuffer sbf = new StringBuffer(str);
+		//2.append方法
+		sbf.append(str);
 
 
 
