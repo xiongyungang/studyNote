@@ -23,7 +23,7 @@
 发布文章1
 
 【功能】
-下拉刷新：ajax获取指定用户的所有文章	
+下拉刷新：ajax获取指定用户的所有文章，随机
 游客功能：
 	获取所有
 	根据分类获取
@@ -46,6 +46,8 @@
 
 【跳转到login，没有跳回来】
 
+【deleteMapping传递不了ajax中data数据】
+使用type:post方式，在data中_method:"delete"即可
 
 
 /***************thymeleaf************
