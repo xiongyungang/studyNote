@@ -1,25 +1,58 @@
-Druid连接池
-Shiro权限管理
-Hibernate
-正则表达式（javase,js）
-HashList 去重复
-HashMap 去重复
-异常处理
+【基础】
+正则表达式（javase,js）ok
+ArrayList 去重复17:41 2019/2/2
+HashMap 去重复12:15 2019/2/15
+异常处理 ok
 多线程
-io
+io	ok
 集合
+redis
+rabbitmq
+docker面试题
+
+【项目】
+文章列表分页	ok
+首页文章下拉刷新美化
+详细文章美化
+拦截器修改为shiro拦截
+用户注册	ok
+多用户点赞
+个人中心（相册）
+图片上传模块（相册、头像、内容图片）
+
+部署ssm 21:26 2019/3/3
+部署e3mall 21:26 2019/3/3
+
+【框架】
+springIOC
+springAOP 20:34 2019/2/26
+springJPA
+mybatis
+struct2\springmvc区别
+Shiro权限管理	10% 23:22 2019/2/17
+Hibernate	50%
 
 【算法】
-两个栈模拟队列
-topK
-二分查找
+斐波那契数列	0:16 2019/2/20
+快速排序	0:16 2019/2/20
+二分查找	0:16 2019/2/20
+两个栈模拟队列	ok
+topK	
 B+树
-红黑树
+丑树
+
+【mysql】
+增删改查
+面试题
+介绍一下mysql主从复制
 
 【jvm】
 jdk源码
 jvm类的加载机制
 java会不会内存泄漏
 垃圾处理机制
+内存模型
+NIO/AIO
 
-简历
+
+简历 ok

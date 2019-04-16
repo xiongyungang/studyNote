@@ -1,16 +1,26 @@
-/********2018/5/17**********
+# 2018/5/17
+```
 net start mysql 打开MySQL服务器
 net stop mysql 停止服务器
-【设置密码】mysqladmin -u root password admin
+```
+## 设置密码
+```
+mysqladmin -u root password admin
+```
 
-【连接Linux下mysqlServer】
+## 连接Linux下mysqlServer
+```
 将权限授予其他电脑
 mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '自己密码' WITH GRANT OPTION;
 mysql> FLUSH PRIVILEGES;
-【windows开启关闭mysql】net stop/start mysql
+```
+## windows开启关闭mysql
+```
+net stop/start mysql
+```
 
-ERROR 1217 (23000): Cannot delete or update a parent row: a foreign key constrain fails。
-
+## ERROR 1217 (23000): Cannot delete or update a parent row: a foreign key constrain fails。
+```
 可能是MySQL在InnoDB中设置了foreign key关联，造成无法更新或删除数据。可以通过设置FOREIGN_KEY_CHECKS变量来避免这种情况。
 
 1、set foreign_key_checks=0;
@@ -18,18 +28,23 @@ ERROR 1217 (23000): Cannot delete or update a parent row: a foreign key constrai
 2、删除要删除的表;
 
 3、set foreign_key_checks=1;
+```
 
-/**********database**********
 
+# database
+```
 DROP DATABASE <dbName> 删除数据库
 ALTER DATABASE <dbName> default character set <utf8/gbk> 修改数据库默认字符集
 SHOW DATABASES; 查看所有数据库
 SHOW CREATE DATABASE <dbName> 查看数据库默认字符集
 CREATE DATABASE <dbName> [default character set <utf8/gbk>]; 创建数据库，指定字符集
 USE <datebasename>打开数据库
+```
 
-/**********table***********
 
+
+# table
+```
 CREATE TABLE  <tableName> (  <字段名> <类型>[(长度),]...)  创建表
 DESC <tbName> 查看表结构
 SHOW TABLES 查看所有表
@@ -39,15 +54,18 @@ ALTER TABLE <tbName> ADD <字段名> <类型>[(长度)] [,ADD <字段名> <类型>] 增加表字
 ALTER TABLE <tbName> DROP <字段名>    删除表字段
 ALTER TABLE <tbName> MODIFY <字段名> <类型>[(长度)] 修改表字段类型
 ALTER TABLE <tbName> CHANGE <原字段名> <新字段名> <类型>[(长度)] 修改表字段名
-
-/************record********
-
+```
+# record
+```
 DELETE FROM <TN> [<WHERE>...]删除记录
 TRUNCATE TABLE <tbName> 删除全部记录，和delete区别在于：不可带条件，不可回滚，可以重置自增长
 INSERT INTO <tableName> VALUES() 插入记录，全部字段
 INSERT INTO <tbName>(字段列表) VALUES(字段列表值) 指定字段插入记录
 UPDATE <tbName> SET <字段名=值> [,<字段名=值>...] [WHERE] 修改记录
+```
 
+# select
+```
 SELECT * FROM <tbName>查询所有列
 SELECT DISTINCT * FROM <tbName> 去重复记录
 SELECT <字段名> [,<字段名>...] FROM <tbName> 查询指定字段
@@ -56,64 +74,194 @@ SELECT <字段名> 'JAVA就业班' as '班级' FROM <tbName> 查询时添加常量列
 SELECT <(数值字段1+数值字段2)> as '成绩' FROM <tbName> 查询时累计数值列
 SELECT * FROM <tbName> WHERE BETWEEN <字段>  0 AND 10 包前包后条件查询，该字段>=0 and <=10
 SELECT * FROM <TN> WHERE <字符类型字段> LIKE CONCAT('%',string,'%') 模糊查询
-【模糊查询通配符】%任意多个字符/ _任意单个字符   like '李%'：姓李，like '李_'：姓李2个字
+```
+## 模糊查询通配符
+> %任意多个字符/ _任意单个字符   like '李%'：姓李，like '李_'：姓李2个字
+```
 SELECT * FROM <TN> [ORDER BY]  [DESC]查找加排序
-【条件查询】
-1逻辑条件：and or
+```
+## 条件查询
+>1逻辑条件：and or
 2比较条件：> < >= <= <>(不等) =    between and()
 3判空条件：
 1)null值：is null/is not null
 2)空字符串：='' / <>''
 4模糊条件：like
-【聚合查询】使用聚合函数的查询
-1.sum():求和
+
+## 聚合查询
+>使用聚合函数的查询
+### sum():求和
+```
 SELECT SUM(<字段>) FROM <tbName>
-2.avg():平均值
+```
+### avg():平均值
+```
 SELECT SUM(<字段>) FROM <tbName>
-3.max()/min():最值
-4.count():统计记录数
+```
+### max()/min():最值
+### count():统计记录数
+```
 注意：count()会省略null值的字段
 SELECT COUNT(*) FROM <tbName>
-【分页查询】
+```
+### 分页查询
+```
 limit 起始行 查询几行
 SELECT * FROM <tbName> [LIMIT 0, n]
-【排序查询】
+```
+### 排序查询
+```
 顺序：ASC 
 逆序：DESC
 SELECT * FROM <tbName> ORDER BY <字段> DESC/ASC
 多个排序排序条件，前一个条件相同结果再按后一个条件排序
 SELECT * FROM <tbName> ORDER BY <字段> [,<字段>]
-【分组查询】字段值相同为一组
-注意：分组之后加条件用HAVING
+```
+### 分组查询:字段值相同为一组
+>注意：分组之后加条件用HAVING
+```
 SELECT <分组字段> FROM <tbName> GROUP BY <分组字段> [HAVING 条件]
+```
 
-*************数据约束**********
+# 函数
+## 字符函数
+```
+--concat(col,col...)字符链接函数
+select concat(name,gender) as nameandgender from student_
 
-【默认值】
+--concat_ws(connector,col,col),连接符链接字符
+select concat_ws(',','hello','world') as conent
+
+--format(StrNum),字符数字的格式化（就是四舍五入..）
+select format(round(3.1445926,3),2)
+
+--UPPER(),LOWER()大小写转换
+
+--LENGTH()字符长度
+
+--LTRIM(),RTRIM(),TRIM()删除前导空格，后导空格，全部空格
+--TRIM的特殊用法，删除指定前后字符
+
+--删除前导？
+select TRIM(LEADING '?' FROM '??MYSQL??')
+
+--删除后导？
+select TRIM(TRAILING '?' FROM '??MYSQL??')
+
+--删除前后？
+select TRIM(BOTH '?' FROM '??MYSQL??')
+
+--REPLACE(STR,BEFORE,AFTER)
+select REPLACE('??MY??SQL???','?','')
+
+--SUBSTRING(STR,INDEX,LEN),字符串截取
+select SUBSTRING('MYSQL',3,3)
+
+--STR1 LIKE STR2
+--%匹配任意字符，'_'匹配任意一个字符
+--特殊：使用ESCAPE '1'表示在匹配%号时告诉MYSQL：1后面的不需要解析为通配符
+select '123%' LIKE '%1%%' ESCAPE '1';
+```
+## 数值函数
+```
+--CEIL(),FLOOR()向上取整，向下取整
+select CEIL(3.01) --4
+select FLOOR(3.99)  --3
+
+--MOD,取余
+select 5 % 3
+select 5 MOD 3 --等价
+
+--幂运算
+select POWER(3,3) --27
+
+--数值截取
+select TRUNCATE(123.456,2)  --123.45
+select TRUNCATE(123.456,-1) --120
+```
+## 比较运算符与函数
+```
+-- [NOT] BETWEEN ... AND...
+-- [NOT] IN()
+-- IS [NOT] NULL
+select NULL IS NULL; -- 1
+```
+## 日期函数
+```
+select NOW(); -- 当前日期时间
+select CURDATE(); -- 当前日期
+select CURTIME(); -- 当前时间
+
+-- DATE_ADD(DATA,ADD),日期增减
+select DATE_ADD(NOW(),INTERVAL 1 YEAR); -- 1年后
+select DATE_ADD(NOW(),INTERVAL -1 MONTH); -- 1个月前
+select DATE_ADD('1997-8,7',INTERVAL 22 YEAR)； -- 1997-8-7后的22年
+
+-- DATEDIFF(DATE1,DATE2)，日期差
+select DATEDIFF('1997-8-7',CURDATE())；
+
+-- DATE_FORMAT(DATE,FORMAT),日期格式化
+select DATE_FORMAT(NOW(),'%m/%d/%Y')；-- 03/04/2019
+```
+## 信息函数
+```
+select database(); --数据库名称
+select version(); --数据库版本信息
+select last_insert_id(); --最后插入的id
+select user(); --当前用户
+```
+## 聚合函数
+```
+select avg(price) as avg_price from product_; 
+select max(price) as max from product_
+select count(id) from product_
+```
+## 加密函数
+```
+select MD5('admin')
+select password('admin')
+```
+
+
+# 数据约束
+## 默认值
+```
 create table student(
        id int,
        address varchar(40) default '中国大陆'
 )
-【非空】必须赋值，不能赋值null
+```
+## 非空
+>必须赋值，不能赋值null
+```
 create table student(
        id int,
        gender varchar(2) not null
 )
-【唯一】对null值不起作用
+```
+## 唯一
+>对null值不起作用
+```
 create table student(
        id int unique
 )
-【主键】(非空+唯一)，标记记录的唯一性
+```
+## 主键
+>(非空+唯一)，标记记录的唯一性
+```
 create table student(
        id int PRIMARY KEY,
        gender varchar(2) not null
 )
-【自增长】
+```
+## 自增长
 AUTO_INCREMENT
 ZEROFILL 零填充
-【外键约束】
-CONSTRAINT 外键名称 FOREIGN KEY(外键) REFERENCES 参考表(参考字段)
+
+## 外键约束
+>CONSTRAINT 外键名称 FOREIGN KEY(外键) REFERENCES 参考表(参考字段)
 --部门表（主表）
+```
 create table dept(
 id int primary key,
 deptName varchar(20)
@@ -124,103 +272,316 @@ id int ,
 deptId int,
 constraint bydept foreign key(deptId) references dept(id)
 )
-注意：被约束的表为副表，约束别人的表为主表，外键设置在副表上
+```
+>注意：被约束的表为副表，约束别人的表为主表，外键设置在副表上
 主表的参考字段通常为主键
-【级联】级联在外键约束的基础上，通过修改主表影响副表
-级联修改：外键约束+ON UPDATE CASCADE
-级联删除：外键约束+ON DELETE CASCADE
-/**************数据库设计*********
+## 级联
+>级联在外键约束的基础上，通过修改主表影响副表
+### 级联修改：外键约束+ON UPDATE CASCADE
+### 级联删除：外键约束+ON DELETE CASCADE
 
-【三大范式】
-1.每个字段独立
+
+
+# 数据库设计
+## 三大范式
+>1.每个字段独立
 2.与主键有依赖关系
 3.只能和主键有直接绝定依赖关系
 
-/*************连接*********
-【连接条件数量】表数量-1
-【交叉连接查询】不加条件查询
-【内连接查询】满足条件才会显示
+
+# 连接
+>语法：
+table1 {INNER JOIN|LEFT [OUTER] JOIN|RIGHT [OUTER] JOIN} table2 ON conditional
+
+##连接条件数量
+>表数量-1
+## 交叉连接查询
+>不加条件查询
+## 内连接查询
+>满足条件才会显示
 INNER JOIN <tbName> ON <连接条件>
+```
 select employee.empName,dept.deptName
 from employee inner join dept on employee.deptId=dept.id
-【左[外]连接查询】左表数据完全显示，不满足显示null
+```
+## 左[外]连接查询
+>左表数据完全显示，不满足显示null
 LEFT [OUTER] JOIN <tbName> ON <连接条件>
+```
 select d.id '部门编号',d.deptName '部门名称',e.empName '员工姓名'
 from dept d left join employee e on d.id=e.deptId
-【右[外]连接查询】右表数据完全显示，不满足显示null
+```
+
+
+## 右[外]连接查询
+>右表数据完全显示，不满足显示null
 RIGHT [OUTER] JOIN <tbName> ON <连接条件>
+```
 select d.id,d.deptName,e.empName 
 from employee e right join dept d on  d.id=e.deptId
-【自连接查询】用别名虚拟出一张表，同表进行连接查询
+```
+## 自连接查询
+>用别名虚拟出一张表，同表进行连接查询
+```
 select e2.empName,e.empName 'boss'
 from employee e2 left join employee e on e.id=e2.bossId
-【多表连接语法】
+```
+## 多表连接语法
+```
 select p.pname,c.name,b.brand_name from product_ p 
 inner join category_ c on p.cate_id =c.id
 inner join brands b on p.brand_id = b.brand_id
+```
 
-/****************子查询*******
-【比较运算符引发的子查询】
+
+
+# 子查询
+## 比较运算符引发的子查询
 查询产品表中价格大于价格平均值的记录
-select * from product_ where price > (
-select avg(price) p_avg from product_)
-
+```sql
+select * from product_ where price > 
+(
+select avg(price) p_avg from product_
+)
+```
+## 用ANY、SOME、ALL修饰的比较运算符
+```
 	ANY	SOME	ALL
 >/>=	最小值	最小值	最大值
 </<=	最大值	最大值	最小值
 =	任意	任意	/
 <>/!=	/	/	任意
 
-【由[NOT]IN 引发子查询】
+记忆方法：ALL时大于最大值，小于最小值，SOME、ANY与ALL相反
+-----
+//大于最大值
+select * from product_ where price >= ALL (
+       select price from product_
+)
+```
+
+## 由IN/NOT INT 引发子查询
 1）=ANY运算符与IN等效
 2）!=ALL或<>ALL与NOT IN等效
-【insert...select】insert into <tb>(<字段>) [select...]
+```
+select * from product_ where price in(
+       select price from product_
+)
+等价于
+select * from product_ where price = SOME(
+       select price from product_
+)
+```
+## insert...select
+>insert into <tb>(<字段>) [select...]
+```
 将产品表分类名称字段分组，插入到分类表中
 insert into category_(name) select cate from product_ group by cate;
-【多表更新】update <tb> <连接类型 on 连接条件> set <更新内容>
+```
+## 多表更新
+>update <tb> <连接类型 on 连接条件> set <更新内容>
+```
 将产品表的分类名称替换为分类表的id
 update product_ p inner join category_ c on p.cate = c.name set p.cate = c.id
-【create...select】通过查询结果创建表
+```
+## create...select
+>通过查询结果创建表
+```
 将产品表的品牌字段分组创建品牌表
 create table brands (
 brand_id smallint unsigned primary key auto_increment,
 brand_name varchar(20)
 )
 select brand_name from product_ group by brand_name;
-【子查询实现去除产品名相同记录】
+```
+## 子查询实现去除产品名相同记录
+```
 delete t1 from product_ t1			//使用自连接方式
 left join (select p.id,p.name from product_ p 	//左外连接
 group by p.name having count(p.name)>1)) as t2 	//子查询：查询产品表并按产品名分组，数量>1的记录
 on t1.name=t2.name where t1.id>t2.id		//连接条件：和子查询的p.name相同，并且过滤第一条记录
+```
 
-/*************存储过程******
-【创建】
+
+
+# 存储过程
+## 创建
+```
 delimiter $--设置结束标识（front内置了标识为;）
 CREATE PROCEDURE pro_test()  --存储过程名称(参数列表)
 BEGIN
      select * from employee;
 END $
-【调用】CALL pro_test(参数);
-【删除】DROP PROCEDURE pro_test;
-【参数】
+```
+## 调用
+```
+CALL pro_test(参数);
+```
+## 删除
+```
+DROP PROCEDURE pro_test;
+```
+## 参数
+```
 1.INT:输入参数
 2.OUT：输出参数
 3.INOUT：输入输出参数
+```
 
-
-/***********mysql变量*******
+## mysql变量
 1.全局变量：mysql内置的变量
 2.会话变量：作用域在客户端和服务器一次连接中生效
 3.局部变量：在存储过程中使用的变量
 
 
-/************触发器***********
-【插入员工表向日志表添加一条记录】
+## 触发器
+### 插入员工表向日志表添加一条记录
+```
 create trigger tri_empAdd after insert on employee for each row
 insert into test_log(content) values('员工表插入了一条数据');
-【更新员工表向日志表添加一条记录】
+```
+### 更新员工表向日志表添加一条记录
+```
 create trigger tri_empUpdate after update on employee for each row
 insert into test_log(content) values('员工表修改了一条数据');
-【删除员工表向日志表添加一条记录】
+```
+### 删除员工表向日志表添加一条记录
+```
 create trigger tri_empDel after delete on employee for each row
 insert into test_log(content) values('员工表删除了一条数据');
+```
+
+
+
+# 事务
+## 事务的特征(ACID)
+>1.原子性(Atomicity)：事务中的所有操作不可再分，所有操作要么全部成功，要么全部失败
+
+
+2.一致性(Consistency)：事务操作之前是一种状态，操作之后是一种状态，但是数据库系统的一致性保持不变。
+
+
+3.隔离性(Isolation)：多个事务共同进行操作时，他们的操作过程是隔离的。即任何一个事务在操作过程中，其它事务操作不能看到其操作过程。
+
+
+4.持久性(Durability)：事务一旦提交，则对数据库的影响是持久性的，不能撤销（回滚）。
+ 
+## 事务隔离级别
+### 前提概念
+>1.脏读：一个事务读取到了其它事务操作过程中的数据，这种现象叫做“脏读”，读取到的数据叫做“脏数据”。
+2.不可重读（现象）：在一个事务中两次读取到的数据不一致的现象，叫做不可重读。
+3.幻读：两次读取到的记录数量不一致的现象。
+### 隔离级别
+>1.读未提交隔离级别(read uncommitted)：可以读取到其它事务未提交的数据，可能发生脏读、不可重读、幻读。
+
+
+2.读提交级别（read committed）：只能读取到其它事务已经提交的数据，可能发生不可重读、幻读。
+
+
+3.可重读级别（repeatable read）：mysql默认的隔离级别
+
+在一个事务中多次读取到的数据值是相同的。
+
+注：在mysql的InnoDB存储引擎已经解决了幻读现象。
+
+
+4.序列化（串行化）隔离级别（Serializable）
+
+事务在序列化隔离级别下，普通的执行select查询操作语句也会加“读锁”。
+
+
+# 索引
+## 本质
+>索引就是一个b+树，一种为磁盘存储设计的平衡查找树，所有记录节点按照键值顺序存放在叶子节点上；
+## 分类（数据结构，了解）
+### 全文索引
+>针对文章或字符的索引，MySql5.6以上innodb也支持了这种索引
+### b+索引
+>一种为磁盘存储设计的平衡查找树,InnoDB使用b+索引
+### hash索引
+>速度最快，但只支持=,!=,in,not in等简单操作
+### R树索引
+>即空间树索引，MySQL不支持
+
+## 分类（了解）
+### 非空索引
+>要求数据不能为空或null
+### 普通索引
+### 唯一索引
+>要求数据不重复，但可以为空或null
+### 全文索引
+
+## mysql建立索引
+###添加PRIMARY KEY（主键索引） 
+```
+ALTER TABLE `tbl_name` ADD PRIMARY KEY ( `column` ) 
+```
+### 添加UNIQUE(唯一索引) 
+```
+ALTER TABLE `tbl_name` ADD UNIQUE ( 
+`column` 
+) 
+```
+### 添加INDEX(普通索引) 
+```
+ALTER TABLE `tbl_name` ADD INDEX index_name ( `column` ) 
+```
+### 添加FULLTEXT(全文索引) 
+```
+ALTER TABLE `tbl_name` ADD FULLTEXT ( `column`) 
+```
+### 添加多列索引 
+```
+ALTER TABLE `tbl_name` ADD INDEX index_name ( `column1`, `column2`, `column3` )
+```
+
+# 优化
+## 使用explain来进行索引优化
+>格式：explain SQL 
+### Extra：解决查询的详细信息
+>可能需要优化的输出：
+Using filesort：mysql需要进行额外的步骤进行排序
+Using tempara：mysql需要创建临时表
+
+## 其他优化
+>1.尽量不要使用select *
+2.EXPLAIN 你的 SELECT 查询
+3.为搜索字段建索引
+4.只要一行数据时使用limit 1,mysql会在找到一条语句后停止搜索
+5.为表设计主键ID
+
+## 索引的应用
+### 应该使用索引
+>1.经常出现再where后的字段
+2.经常出现在order by或group by的字段
+3.join表时的on语句后面的字段
+4.经常用与sum，count等聚合操作的字段
+### 不应使用索引
+> 1.频繁更新/删除的字段
+2.Text Blob字段
+3.数据很少的表
+
+
+# 数据库锁
+## 数据库锁分为“读锁”（共享锁）和“写锁”（排它锁）。
+
+
+>“读锁”与“读锁”可以兼容共享，但是与“写锁”排斥。“写锁”与“读锁”和其它“写锁”都排斥。
+## 手工加锁方式
+
+
+###手工添加“读锁”方式
+```
+select 字段名... from 表名称 【where 条件】 lock in share mode;
+
+
+```
+### 手工添加“写锁”方式
+```
+select 字段名... from 表名称 【where 条件】 for update;
+## mysql锁策略
+### 表锁
+>是一种开销最小的锁策略，它将整个表加一个锁
+### 行锁
+>是一种开销最大的锁策略，它将表中每一条记录加锁
+```

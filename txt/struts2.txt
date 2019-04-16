@@ -1,0 +1,14 @@
+【action】
+<action name="showProduct" class="com.how2java.action.ProductAction" method="show">
+    <result name="show">show.jsp</result>
+</action> 
+
+name="showProduct" 路径名
+class="com.how2java.action.ProductAction" 访问该路径时，查找的类
+method="show"  执行的方法
+<result name="show">  方法返回的参数是show时，会访问该结果中的页面，‘所以show()方法返回的字符串是show时，会访问show.jsp’
+show.jsp  方法返回show时，访问的页面是show.jsp
+
+【session】
+Map m = ActionContext.getContext().getSession();
+
