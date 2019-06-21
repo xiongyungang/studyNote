@@ -23,7 +23,7 @@
 注册23:30 2018/8/14
 用户评论点赞	2019/1/30
 文章收藏21:47 2019/2/1
-个人中心
+个人中心13:31 2019/5/5
 
 下拉刷新：ajax获取指定用户的所有文章，随机
 游客功能：
@@ -39,24 +39,12 @@
 	根据用户和开始结束时间获取
 	根据用户、时间、分类获取文章列表
 	用户中心：
-		个人信息、收藏文章、用户文章
+		个人信息、收藏文章、用户文章、个人相册
 【角色】
 	游客：
-		浏览、评论
+		浏览
 	会员：
-		发布、修改、点赞
-	管理员：
-		加精（收入首页）、编辑分类
-
-【代码重构】
-1.控制层 服务层 数据访问层，各个层规划统一处理的内容。
-	控制层只单纯接受页面值，传递给服务层返回给页面
-	服务层操作多个dao，并且合理的添加事务
-2.文章缺少更新时间
-	文章详细中显示文章最后更新时间
-3.文章详细的Result
-	如果可以应该是所以页面返回Result对象
-4.数据库字段修改
+		浏览、评论、发布、修改、点赞
 
 【fastdfs】
 docker run -d --name storage --net=host -v /var/fdfs_data:/data/fast_data/data -e  TRACKER_IP=120.78.88.153:22122 -e GROUP_NAME=group1  morunchang/fastdfs sh storage.sh
@@ -95,6 +83,8 @@ docker run -d --name tracker --net=host  morunchang/fastdfs sh tracker.sh
 【yml文件】
 idea不识别yml文件：1没装插件2设置中File Types把yml识别为text了
 yml文件从其他项目拷贝，编码不一样导致无法识别
+
+【游客收藏未跳转到登陆页】
 
 # thymeleaf
 【标签】

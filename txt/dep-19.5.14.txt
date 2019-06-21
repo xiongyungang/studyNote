@@ -1,0 +1,172 @@
+10:01 2019/4/15
+熟悉开发平台，写了一些流程，用开发平台调用和调试插件；修改插件日志的输出，根据日志排查出现的问题；在修改线程退出导致的平台崩溃的问题，看了一些c++代码开发规范；
+本周主要继续熟悉开发平台和插件；
+
+
+要求：提出问题、分点作答
+
+
+15:31 2019/4/18
+主要在vmt设备上调试插件，根据实际的调试结果熟悉SVN命令，编写了一个socket通信，vmt调试。
+
+
+
+22:55 2019/4/24
+  cenumvariable::cenumvariable(cndamplugin& plugin)
+    : m_plugin(plugin)
+  {
+    m_strlbuttonvar  = plugin.m_pengine->getprofilestring(_t("engine"),_t("lbuttonvar"),_t("cancel_pressed"));
+    m_strrbuttonvar  = plugin.m_pengine->getprofilestring(_t("engine"),_t("rbuttonvar"),_t(""));
+    m_strresetvar    = plugin.m_pengine->getprofilestring(_t("engine"),_t("resetvar"),_t("stop_all"));
+    logmessage1(loglevel_info,_t("[extndam] m_strlbuttonvar=%s"),m_strlbuttonvar.c_str());
+    logmessage1(loglevel_info,_t("[extndam] m_strrbuttonvar=%s"),m_strrbuttonvar.c_str());
+    logmessage1(loglevel_info,_t("[extndam] m_strresetvar=%s"),m_strresetvar.c_str());
+  }
+按开发规范重新调整了代码，安装了几个代码检查工具cpplint\pclint并整理成文档，修改irdatocom的启动方式，读取配置文件，错误日志输出次数。本周先看看代码检查脚本怎么实现的
+
+
+irda:
+init()
+connect()
+-|WIN:socket()== INVALID_SOCKET,return -1
+-|WIN:getsockopt()== SOCKET_ERROR,return -1,log
+-|WIN:connect()==SOCKET_ERROR,return -1,log1
+recv()接收数据
+接收到数据转义后调用comserver::senddata()
+
+comserver:
+init():打开和初始化串口
+WIN:SetCommMask():设置串口通信事件,log
+WIN:WaitCommEvent():等待串口通信事件,log
+读取串口数据和输出
+读取到的数据为结束标记执行irda::senddata(),log
+
+comserver::senddata():往串口写数据，调用writeFile()
+irdaclient::senddata():向一个已经连接的socket发送数据，调用send()
+
+
+
+
+
+
+// 转义
+void ComServer::LCPirda2com(byte *descbuf, byte *srcbuf, int& deslen, int srclen)
+{
+  if (NULL != descbuf && NULL != srcbuf)
+  {
+    descbuf[0] = 0x7E;
+    int j = 1;
+    for (int i = 0; i < srclen; ++i)
+    {
+      if (srcbuf[i] < 0x20 || srcbuf[i] == 0x7E || srcbuf[i] == 0x7D)
+      {
+        descbuf[j] = 0x7D;
+        descbuf[j + 1] = srcbuf[i] ^ 0x20;
+        j += 2;
+      }
+      else
+      {
+        descbuf[j] = srcbuf[i];
+        ++j;
+      }	
+    }
+    descbuf[j] = 0x7E;
+    deslen = j + 1;
+  } 
+  else
+  {
+    logMessage0(LOGLEVEL_ERROR, _T("LCPirda2com() null pointer dereference \n")); 
+  }
+  
+}
+
+
+
+9:25 2019/5/5
+上周主要看了代码检查工具的错误类型，配置到项目路径；然后修改和屏蔽一些规则来符合我们现有的开发规范。本周还是继续弄那个pclint和cpplint
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpplint:
+whitespace/indent	public前+1空格
+whitespace/tab		使用tab
+readability/utf8	中文
+whitespace/braces	行尾{
+whitespace/end_of_line	行尾空格
+whitespace/newline	else出现在}后
+
+                                 C              C++           告警级别
+内部错误(Internal Errors)    200 - 299                            0
+致命错误(Fatal Errors)       300 - 399                            0
+语法错误(Syntax Errors)      1   - 199      1001 - 1199           1
+告警(Warnings)               400 - 699      1400 - 1699           2
+提示(Informational)          700 - 899      1700 - 1899           3
+可选信息(Elective Notes)     900 - 999      1900 - 1999           4
+
+
+
+1538	子类拷贝需要调用基类构造，否则调用基类默认构造（子类禁止拷贝也会报）
+1529	赋值操作符重载第一个语句if( &arg == this || arg == *this)，防止自赋值
+1579	析构函数中有为释放的数据成员，有可能被外部函数释放，但是没有-sem( C::FunName, cleanup )检查
+40    变量未声明 
+506    固定的Boolean值     char c=3;
+            if(c<300){}
+525    缩排格式错误 
+527    无法执行到的语句    if(a > B)
+            return TRUE;
+            else
+             return FALSE;
+            return FALSE;
+529    变量未引用      检查变量未引用的原因
+530    使用未初始化的变量 
+534    忽略函数返回值 
+539    缩排格式错误 
+545    对数组变量使用&     char arr[100], *p;
+            p=&arr;
+603    指针未初始化     void print_str(const char *p);
+            …
+            char *sz;
+            print_str(sz);
+605    指针能力增强     void write_str(char *lpsz);
+            …
+            write_str(“string”);
+613    可能使用了空指针 
+616    在switch语句中未使用break; 
+650    比较数值时，常量的范围超过了 if( ch == 0xFF ) ...
+    变量范围 
+713    把有符号型数值赋给了无符号型
+    数值 
+715    变量未引用 
+725    Indentation错误 
+734    在赋值时发生变量越界   int a, b, c;
+            …
+            c=a*b;
+737    无符号型变/常量和有变量型
+    变/常量存在于同一个表达式中。  
+744    在switch语句中没有default 
+752    本地声明的函数未被使用 
+762    函数重复声明 
+774    Boolean表达式始终返回真/假  char c;
+            if(c < 300)
+
+
+17:11 2019/5/8
+对开发规范做了一下整理。修改LAS插件接受json格式的车辆数据，看了一些UPS插件上传下载服务。本周计划测试一下插件是否可用。

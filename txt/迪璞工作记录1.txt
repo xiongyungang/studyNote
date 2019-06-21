@@ -1,0 +1,113 @@
+# '\\\\.\\'
+由于"\"是C/C+中转义符, "\\\\.\\"就相当于\\.\
+
+在Windows中 \\.\ 前缀用于标识设备，其中的"."表示本地计算机。
+
+比如\\.\PhysicalDrive0表示本机的物理驱动器0(一般是主硬盘),
+\\.\COM1表示本机的1号串行口
+\\computer01\PhysicalDrive1表示网络中计算机computer01的物理驱动器1，等等。
+
+你可以用CreateFile函数打开\\.\PhysicalDrive0
+然后用ReadFile, WriteFile来直接读写本机硬盘扇区
+用DeviceIoControl来获取硬盘的信息（扇区数，磁头数，柱面数）等。
+
+亦可用CreateFile打开卷，如\\.\C:即是C盘。
+
+#线程
+## 开启新线程
+```c++
+HANDLE WINAPI CreateThread(
+__in_opt?LPSECURITY_ATTRIBUTES lpThreadAttributes,//为新线程指定安全描述 
+__in? ? SIZE_T dwStackSize,? //第二个参数是线程堆栈尺寸，一般设为0
+__in? ? LPTHREAD_START_ROUTINE lpStartAddress,? //是一个指向函数名的指针
+__in_opt?LPVOID lpParameter,? //需要向线程函数传递的参数，没有则为NULL
+__in? ? DWORD dwCreationFlags, //一般为0，创建好线程即运行
+__out_opt LPDWORD lpThreadId? //系统分配给线程ID标志
+); 
+```
+
+## 线程等待WaitForSingleObject()
+https://blog.csdn.net/s18754992795/article/details/51916861/
+
+## 线程锁操作
+```
+CRITICAL_SECTION m_section;//锁对象
+
+EnterCriticalSection(&m_section);//加锁 
+
+...//不允许其他线程进行操作
+
+LeaveCriticalSection(&m_section);//解锁 到EnterCriticalSection之间代码资源已经释放了，其他线程可以进行操作
+```
+
+# GetLastError函数使用及返回代码对照
+https://blog.csdn.net/whui19890911/article/details/46127017
+
+
+
+
+
+# 串口编程
+## CreateFile、ReadFile和WriteFile
+https://blog.csdn.net/li_wen01/article/details/79891602
+
+## GetCommState、SetCommState
+https://blog.csdn.net/wangshubo1989/article/details/47746845
+
+# Event
+https://blog.csdn.net/u011394598/article/details/82981399
+
+
+# winSock
+## recv():用于已连接的套接口进行数据的接收 
+https://blog.csdn.net/mercy_ps/article/details/82224128
+
+
+
+
+
+
+# 数据类型
+DWORD	unsigned long
+WORD 	ungigned short
+WCHAR	wchar_t
+byte unsigned char
+
+
+
+
+
+
+
+# 任务
+## unicode和多字节转换（A代表 T代表多字节，）
+## 事件，虚函数，串口编程，句柄，io，多线程
+## win7，svn版本控制,win32,MFC,BCG界面库，docker,c3p0
+## obd接口，也是车载自动诊断系统
+## XML,JSON
+## lua脚本,python
+## socket
+## 关键帧=>头部：0x0000,数据（文件描述，车辆数据信息，长度），根据头部寻找数据，分割
+
+
+
+
+
+
+
+
+# 问题及解决
+## winsock头文件冲突
+```
+#include <Winsock2.h>
+#include <windows.h>
+```
+
+## 空指针
+```
+delete a;
+a = NULL;
+```
+
+## 字符串输出：烫烫烫
+字符串是否初始化为0
